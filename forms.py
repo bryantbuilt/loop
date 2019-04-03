@@ -85,7 +85,7 @@ class OpportunityForm(Form):
     name = StringField('Name')
     # owner = HiddenField('Hidden')
     opportunity_type = StringField('Type')
-    primary_contact = StringField('Primary Contact')
+    # primary_contact = StringField('Primary Contact')
     mrr = DecimalField('MRR')
     arr = DecimalField('ARR')
     stage = StringField('Stage')

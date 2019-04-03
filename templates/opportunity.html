@@ -16,9 +16,9 @@
     {% endfor %}
     </select>
     <select name=contact>
-        {% for user in users %}
-            {{render_contact_options(user)}}
+        {% for contact in contacts %}
+            {{render_contact_options(contact)}}
         {% endfor %}
-        </select>
+    </select>
     <button type="submit" id="submit">Save</button>
 </form>

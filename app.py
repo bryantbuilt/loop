@@ -142,6 +142,7 @@ def opportunity():
     # form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
     accounts = models.Account.select()
     users = models.User.select()
+    contacts = models.Contact.select()
     # print(form.account.data)
     print(g.user._get_current_object())
     if form.validate_on_submit():
@@ -154,12 +155,12 @@ def opportunity():
             created_by = g.user._get_current_object(),
             owner = request.form.get('owner'),
             opportunity_type = form.opportunity_type.data,
-            primary_contact = form.primary_contact.data,
+            primary_contact = request.form.get('contact'),
             mrr = form.mrr.data,
             arr = form.arr.data,
             stage = form.stage.data
         )
-    return render_template('opportunity.html', form=form, accounts=accounts, users=users)
+    return render_template('opportunity.html', form=form, accounts=accounts, users=users, contacts=contacts)
 
 if __name__ == '__main__':
     models.initialize()
