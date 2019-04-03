@@ -88,6 +88,79 @@ def logout():
     flash("You've been logged out", 'success')
     return redirect(url_for('index'))
 
+@app.route('/account', methods=['GET','POST'])
+@login_required
+def account():
+    form = forms.AccountForm()
+    if form.validate_on_submit():
+        flash("Account created!", 'success')
+        models.Account.create_account(
+            name = form.name.data,
+            owner = g.user._get_current_object(),
+            created_by = g.user._get_current_object(),
+            account_type = form.account_type.data,
+            street = form.street.data,
+            city = form.city.data,
+            state = form.state.data,
+            country = form.country.data,
+            website = form.website.data,
+            mrr = form.mrr.data,
+            arr = form.arr.data
+        )
+    return render_template('account.html', form=form)
+
+@app.route('/contact', methods=['GET','POST'])
+@login_required
+def contact():
+    form = forms.ContactForm()
+    accounts = models.Account.select()
+    users = models.User.select()
+    if form.validate_on_submit():
+        flash("Contact created!", 'success')
+        models.Contact.create_contact(
+            account = request.form.get('account'),
+            owner = request.form.get('owner'),
+            first_name = form.first_name.data,
+            last_name = form.last_name.data,
+            title = form.title.data,
+            department = form.department.data,
+            street = form.street.data,
+            city = form.city.data,
+            state = form.state.data,
+            country = form.country.data,
+            created_by = g.user._get_current_object(),
+            email = form.email.data,
+            phone = form.phone.data
+        )
+    return render_template('contact.html', form=form, accounts=accounts, users=users)
+
+@app.route('/opportunity', methods=['GET','POST'])
+@login_required
+def opportunity():
+    form = forms.OpportunityForm()
+    # form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
+    # form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
+    accounts = models.Account.select()
+    users = models.User.select()
+    # print(form.account.data)
+    print(g.user._get_current_object())
+    if form.validate_on_submit():
+        # print(form.account.data)
+        # print(form.owner.data)
+        flash("Opportunity created!", 'success')
+        models.Opportunity.create_opportunity(
+            account = request.form.get('account'),
+            name = form.name.data,
+            created_by = g.user._get_current_object(),
+            owner = request.form.get('owner'),
+            opportunity_type = form.opportunity_type.data,
+            primary_contact = form.primary_contact.data,
+            mrr = form.mrr.data,
+            arr = form.arr.data,
+            stage = form.stage.data
+        )
+    return render_template('opportunity.html', form=form, accounts=accounts, users=users)
+
 if __name__ == '__main__':
     models.initialize()
     app.run(debug=DEBUG, port=PORT)

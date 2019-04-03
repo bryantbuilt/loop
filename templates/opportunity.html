@@ -1,0 +1,24 @@
+{% from 'macros.html' import render_field, render_account_options, render_user_options, render_contact_options %}
+
+<form method="POST" action="" class="form">
+    {{ form.hidden_tag() }}
+    <select name=account>
+        {% for account in accounts %}
+            {{render_account_options(account)}}
+        {% endfor %}
+    </select>
+    {% for field in form %}
+        {{ render_field(field) }}
+    {% endfor %}
+    <select name=owner>
+    {% for user in users %}
+        {{render_user_options(user)}}
+    {% endfor %}
+    </select>
+    <select name=contact>
+        {% for user in users %}
+            {{render_contact_options(user)}}
+        {% endfor %}
+        </select>
+    <button type="submit" id="submit">Save</button>
+</form>

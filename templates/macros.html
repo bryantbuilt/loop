@@ -8,3 +8,15 @@
         {{ field(placeholder=field.label.text) }}
     </div>
 {% endmacro %}
+
+{% macro render_account_options(account) %}
+<option data-id="{{ account.id }}" name="{{ account.id }}" value="{{ account.id }}">{{account.name}}</option>
+{% endmacro %}
+
+{% macro render_user_options(user) %}
+<option data-id="{{ user.id }}" name="{{ user.id }}" value="{{ user.id }}">{{user.fullname}}</option>
+{% endmacro %}
+
+{% macro render_contact_options(user) %}
+<option data-id="{{ contact.id }}" name="{{ contact.id }}" value="{{ contact.id }}">{{contact.first_name + ' ' + contact.last_name}} /</option>
+{% endmacro %}
