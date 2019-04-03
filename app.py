@@ -138,29 +138,67 @@ def contact():
 @login_required
 def opportunity():
     form = forms.OpportunityForm()
-    # form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
-    # form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
-    accounts = models.Account.select()
-    users = models.User.select()
-    contacts = models.Contact.select()
-    # print(form.account.data)
-    print(g.user._get_current_object())
+    form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
+    form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
+    form.primary_contact.choices = [(str(contact.id), (contact.first_name + ' ' + contact.last_name)) for contact in models.Contact.select()]
+    # accounts = models.Account.select()
+    # users = models.User.select()
+    # contacts = models.Contact.select()
     if form.validate_on_submit():
-        # print(form.account.data)
-        # print(form.owner.data)
-        flash("Opportunity created!", 'success')
+        flash("Opportunity created", 'success')
         models.Opportunity.create_opportunity(
-            account = request.form.get('account'),
+            account = form.account.data,
+            # account = request.form.get('account'),
             name = form.name.data,
             created_by = g.user._get_current_object(),
-            owner = request.form.get('owner'),
+            owner = form.owner.data,
+            # owner = request.form.get('owner'),
             opportunity_type = form.opportunity_type.data,
-            primary_contact = request.form.get('contact'),
+            primary_contact = form.primary_contact.data,
+            # primary_contact = request.form.get('contact'),
             mrr = form.mrr.data,
             arr = form.arr.data,
             stage = form.stage.data
         )
-    return render_template('opportunity.html', form=form, accounts=accounts, users=users, contacts=contacts)
+    return render_template('opportunity.html', form=form)
+# , accounts=accounts, users=users, contacts=contacts)
+
+@app.route('/subscription', methods=['GET','POST'])
+@login_required
+def subscription():
+    form = forms.SubscriptionForm()
+    form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
+    form.opportunity.choices = [(str(opportunity.id), opportunity.name) for opportunity in models.Opportunity.select()]
+    form.product.choices = [(str(product.id), product.name) for product in models.Product.select()]
+    if form.validate_on_submit():
+        flash("Subscription created",'success')
+        models.Subscription.create_subscription(
+            account = form.account.data,
+            opportunity = form.opportunity.data,
+            product = form.product.data,
+            list_price = form.list_price.data,
+            discount = form.discount.data,
+            sale_price = form.sale_price.data,
+            sub_start_date = form.sub_start_date.data,
+            sub_end_date = form.sub_end_date.data,
+            mrr = form.mrr.data,
+            arr = form.arr.data,
+            created_by = g.user._get_current_object()
+        )
+    return render_template('subscription.html', form=form)
+
+@app.route('/product', methods=['GET','POST'])
+@login_required
+def product():
+    form = forms.ProductForm()
+    if form.validate_on_submit():
+        flash('Product Created','success')
+        models.Product.create_product(
+            name = form.name.data,
+            price = form.price.data
+        )
+    return render_template('product.html', form=form)
+
 
 if __name__ == '__main__':
     models.initialize()

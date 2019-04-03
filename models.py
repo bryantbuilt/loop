@@ -124,7 +124,9 @@ class Subscription(Model):
     account = ForeignKeyField(model=Account,backref='subscription')
     opportunity = ForeignKeyField(model=Opportunity,backref='opportunity')
     product = CharField()
+    list_price = DecimalField()
     discount = DecimalField()
+    sale_price = DecimalField()
     sub_start_date = DateField()
     sub_end_date = DateField()
     mrr = DecimalField()
@@ -133,10 +135,38 @@ class Subscription(Model):
 
     class Meta:
         database = DATABASE
-    
-    
+
+    @classmethod
+    def create_subscription(cls,account,opportunity,product,list_price,discount,sale_price,sub_start_date,sub_end_date,mrr,arr,created_by):
+        cls.create(
+            account = account,
+            opportunity = opportunity,
+            product = product,
+            list_price = list_price,
+            discount = discount,
+            sale_price = sale_price,
+            sub_start_date = sub_start_date,
+            sub_end_date = sub_end_date,
+            mrr = mrr,
+            arr = arr,
+            created_by = created_by
+        )
+
+class Product(Model):
+    name = CharField()
+    price = DecimalField()
+
+    class Meta:
+        database = DATABASE
+
+    @classmethod
+    def create_product(cls,name,price):
+        cls.create(
+            name = name,
+            price = price
+        )
 
 def initialize():
     DATABASE.connect()
-    DATABASE.create_tables([User,Account,Contact,Opportunity,Subscription], safe=True)
+    DATABASE.create_tables([User,Account,Contact,Opportunity,Subscription,Product], safe=True)
     DATABASE.close()
