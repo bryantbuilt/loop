@@ -1,22 +1,49 @@
 {% macro render_field(field) %}
-    <div class="field">
+    <div class="field control">
         {% if field.errors %}
             {% for error in field.errors %}
                 <div class="notification error">{{ error }}</div>
             {% endfor %}
         {% endif %}
         {% if field.type == 'SelectField' %}
-            <label for="{{ field.id }}">{{field.label.text}}</label>
-            {{ field() }}
+                <label for="{{ field.id }}" class='label'>{{field.label.text}}</label>
+                <div class='select'>
+                    {{ field() }}
+                </div>
         {% elif field.type == 'DateField' %}
-            <label for="{{ field.id }}">{{field.label.text}}</label>
+            <label for="{{ field.id }}" class='label'>{{field.label.text}}</label>
             {{ field(type='date') }}
         {% else %}
-            {{ field(placeholder=field.label.text) }}
+            {{ field(placeholder=field.label.text, class='input') }}
         {% endif %}
     </div>
 {% endmacro %}
 
+{% macro render_edit_field(field,record) %}
+    <div class="field">
+        {% for key, value in record.items() %}
+            {% if key == field.id %}
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <div class="notification error">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+                {% if field.type == 'SelectField' %}
+                    <label for="{{ field.id }}">{{field.label.text}}</label>
+                    {{ field(value=value)}}
+                {% elif field.type == 'DateField' %}
+                    <label for="{{ field.id }}">{{field.label.text}}</label>
+                    {{ field(type='date',value=value) }}
+                {% else %}
+                    {{ field(placeholder=field.label.text, value=value) }}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endmacro %}
+
+
+<!-- May not need code below based on styling options -->
 {% macro render_account_options(account) %}
 <option data-id="{{ account.id }}" name="{{ account.id }}" value="{{ account.id }}">{{account.name}}</option>
 {% endmacro %}

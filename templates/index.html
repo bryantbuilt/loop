@@ -12,7 +12,58 @@
     </script>
     <title>Loop CRM</title>
 </head>
-<body>
-    <h1>Welcome</h1>
+<body class='has-navbar-fixed-top'>
+    <header>
+        <nav class="navbar is-fixed-top is-dark" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <a class="navbar-item has-text-weight-semibold" href="{{ url_for('index') }}">
+                    <img src="" />Loop CRM</a>
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+            <div class="navbar-menu">
+              <div class="navbar-end">
+                <div class="navbar-item">
+                  <div class="buttons">
+                    {% if current_user.is_authenticated %}
+                    <a class="button is-light has-text-weight-semibold" href="" title="profile">Profile</a>
+                    <a class="button is-light has-text-weight-semibold" href="{{ url_for('logout') }}" title="logout">Logout</a>
+                    {% else %}
+                    <a class="button is-primary has-text-weight-semibold" href="{{ url_for('signup') }}" title="register">Sign Up</a>
+                    <a class="button is-light has-text-weight-semibold" href="{{ url_for('login') }}" title="login">Login</a>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nav>          
+    </header>
+    <main class='columns'>
+        <aside class="menu column is-2">
+            <p class="menu-label">
+                Tables
+            </p>
+            <ul class="menu-list">
+                <li><a>Accounts</a></li>
+                <li><a>Contacts</a></li>
+                <li><a>Opportunities</a></li>
+                <li><a>Subscriptions</a></li>
+            </ul>
+            <p class="menu-label">
+                Settings
+            </p>
+            <ul class="menu-list">
+                <li><a>Users</a></li>
+                <li><a>Products</a></li>
+            </ul>
+        </aside>
+        <section class='column'>
+            {% block content %}
+            {% endblock %}
+        </section>
+    </main>
 </body>
 </html>

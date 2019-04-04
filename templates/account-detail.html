@@ -1,0 +1,23 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <div class='container columns'>
+        <div class='column'>
+            <p>Account Name: {{account.name}}</p>
+            <p>Account Type: {{account.account_type}}</p>
+            <p>Street: {{account.street}}</p>
+            <p>City: {{account.city}}</p>
+            <p>State: {{account.state}}</p>
+            <p>Country: {{account.country}}</p>
+        </div>
+        <div class='column'>
+            <p>Owner: {{account.owner.fullname}}</p>
+            <p>Website: {{account.website}}</p>
+            <p>MRR: {{account.mrr}}</p>
+            <p>ARR: {{account.arr}}</p>
+            <p>Created By: {{account.created_by.fullname}}</p>
+        </div>
+    </div>
+    <a role='button' class='button' href={{edit_url}}>Update</a>
+    
+{% endblock %}

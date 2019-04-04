@@ -88,10 +88,24 @@ def logout():
     flash("You've been logged out", 'success')
     return redirect(url_for('index'))
 
-@app.route('/account', methods=['GET','POST'])
-@login_required
-def account():
+# Account Routes
+@app.route('/account', methods=['GET'])
+@app.route('/account/', methods=['GET'])
+@app.route('/account/<accountid>', methods=['GET'])
+def account(accountid=None):
     form = forms.AccountForm()
+    form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
+    if accountid != None:
+        account = models.Account.select().where(accountid == models.Account.id).get()
+        edit_url = accountid+"/edit"
+        return render_template('account-detail.html', account=account, edit_url=edit_url)
+    return render_template('account.html', form=form)
+
+@app.route('/account/create', methods=['GET','POST'])
+@login_required
+def create_account(accountid=None):
+    form = forms.AccountForm()
+    form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
     if form.validate_on_submit():
         flash("Account created!", 'success')
         models.Account.create_account(
@@ -107,19 +121,43 @@ def account():
             mrr = form.mrr.data,
             arr = form.arr.data
         )
-    return render_template('account.html', form=form)
+    return render_template('create.html', form=form)
+
+@app.route('/account/<accountid>/edit', methods=['GET','POST'])
+@login_required
+def edit_account(accountid):
+    form = forms.AccountForm()
+    form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
+    record = models.Account.select().where(accountid == models.Account.id).dicts().get()
+    if form.validate_on_submit():
+        flash("Account updated!", 'success')
+        edited_account = models.Account.update(
+            name = form.name.data,
+            owner = form.owner.data,
+            account_type = form.account_type.data,
+            street = form.street.data,
+            city = form.city.data,
+            state = form.state.data,
+            country = form.country.data,
+            website = form.website.data,
+            mrr = form.mrr.data,
+            arr = form.arr.data
+        ).where(accountid == models.Account.id)
+        edited_account.execute()
+        return redirect(url_for('account', accountid=accountid))
+    return render_template('edit.html', form=form, record=record)
 
 @app.route('/contact', methods=['GET','POST'])
 @login_required
 def contact():
     form = forms.ContactForm()
-    accounts = models.Account.select()
-    users = models.User.select()
+    form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
+    form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
     if form.validate_on_submit():
         flash("Contact created!", 'success')
         models.Contact.create_contact(
-            account = request.form.get('account'),
-            owner = request.form.get('owner'),
+            account = form.account.data,
+            owner = form.owner.data,
             first_name = form.first_name.data,
             last_name = form.last_name.data,
             title = form.title.data,
@@ -132,7 +170,7 @@ def contact():
             email = form.email.data,
             phone = form.phone.data
         )
-    return render_template('contact.html', form=form, accounts=accounts, users=users)
+    return render_template('contact.html', form=form)
 
 @app.route('/opportunity', methods=['GET','POST'])
 @login_required
@@ -186,6 +224,31 @@ def subscription():
             created_by = g.user._get_current_object()
         )
     return render_template('subscription.html', form=form)
+
+@app.route('/subscription/<subscriptionid>/edit', methods=['GET','POST'])
+@login_required
+def edit_subscription(subscriptionid):
+    form = forms.SubscriptionForm()
+    form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
+    form.opportunity.choices = [(str(opportunity.id), opportunity.name) for opportunity in models.Opportunity.select()]
+    form.product.choices = [(str(product.id), product.name) for product in models.Product.select()]
+    record = models.Subscription.select().where(subscriptionid == models.Subscription.id).dicts().get()
+    if form.validate_on_submit():
+        flash("Subscription update",'success')
+        edit_subscription = models.Subscription.update(
+            account = form.account.data,
+            opportunity = form.opportunity.data,
+            product = form.product.data,
+            list_price = form.list_price.data,
+            discount = form.discount.data,
+            sale_price = form.sale_price.data,
+            sub_start_date = form.sub_start_date.data,
+            sub_end_date = form.sub_end_date.data,
+            mrr = form.mrr.data,
+            arr = form.arr.data,
+        ).where(subscriptionid == models.Subscription.id)
+        edit_subscription.execute()
+    return render_template('subscription-edit.html', form=form, record=record)
 
 @app.route('/product', methods=['GET','POST'])
 @login_required

@@ -55,6 +55,7 @@ class LoginForm(Form):
 
 class AccountForm(Form):
     name = StringField('Name')
+    owner = SelectField('Owner')
     account_type = StringField('Type')
     street = StringField('Street')
     city = StringField('City')
@@ -65,10 +66,8 @@ class AccountForm(Form):
     arr = DecimalField('ARR')
     # Need Owner and Created By
 class ContactForm(Form):
-    # account = ForeignKeyField(model=Account,backref='contact')
-    # owner = ForeignKeyField(model=User,backref='owner')
-    # created_by = ForeignKeyField(model=User,backref='creator')
-    # opportunity = ForeignKeyField(model=Opportunity,backref='contact')
+    account = SelectField('Account')
+    owner = SelectField('Owner')
     first_name = StringField('First Name')
     last_name = StringField('Last Name')
     title = StringField('Title')
