@@ -8,6 +8,7 @@
     {% for field in form %}
         {{ render_edit_field(field,record) }}
     {% endfor %}
-    <button type="submit" id="submit">Save Changes</button>
+    <button class='button' type="submit" id="submit">Save Changes</button>
+    <a class='button' href='r'>Cancel</a>
 </form>
 {% endblock %}

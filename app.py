@@ -92,13 +92,13 @@ def logout():
 @app.route('/account', methods=['GET'])
 @app.route('/account/', methods=['GET'])
 @app.route('/account/<accountid>', methods=['GET'])
+@app.route('/account/<accountid>/r', methods=['GET'])
 def account(accountid=None):
     form = forms.AccountForm()
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
     if accountid != None:
         account = models.Account.select().where(accountid == models.Account.id).get()
-        edit_url = accountid+"/edit"
-        return render_template('account-detail.html', account=account, edit_url=edit_url)
+        return render_template('account-detail.html', account=account)
     return render_template('account.html', form=form)
 
 @app.route('/account/create', methods=['GET','POST'])
