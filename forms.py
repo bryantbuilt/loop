@@ -56,7 +56,7 @@ class LoginForm(Form):
 class AccountForm(Form):
     name = StringField('Name')
     owner = SelectField('Owner')
-    account_type = StringField('Type')
+    account_type = SelectField('Type', choices=[('prospect','Prospect'),('customer','Customer')])
     website = StringField('Website')
     street = StringField('Street')
     city = StringField('City')
@@ -82,11 +82,11 @@ class OpportunityForm(Form):
     account = SelectField('Account')
     name = StringField('Name')
     owner = SelectField('Owner')
-    opportunity_type = StringField('Type')
+    opportunity_type = SelectField('Type', choices=[('new','New'),('upgrade','Upgrade'),('renewal','Renewal')])
     primary_contact = SelectField('Primary Contact')
     mrr = DecimalField('MRR')
     arr = DecimalField('ARR')
-    stage = StringField('Stage')
+    stage = StringField('Stage', choices=[('qualifying','Qualifying'),('demo','Demo'),('pricing','Pricing'),('won','Closed Won'),('lost','Lost')])
 
 class SubscriptionForm(Form):
     account = SelectField('Account')

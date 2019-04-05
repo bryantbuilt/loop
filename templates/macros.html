@@ -1,27 +1,41 @@
 {% macro render_field(field) %}
-    <div class="field">
-        <div class="control">
-            {% if field.errors %}
-                {% for error in field.errors %}
-                    <div class="notification error">{{ error }}</div>
-                {% endfor %}
-            {% endif %}
-            {% if field.type == 'SelectField' %}
-                    <label for="{{ field.id }}" class='label'>{{field.label.text}}</label>
-                    <div class='select'>
-                        {{ field(class='select') }}
+    <div class="field is-horizontal">
+        {% if field.errors %}
+            {% for error in field.errors %}
+                <div class="notification error">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+        {% if field.type == 'SelectField' %}
+            <div class="field-label">
+                <label for="{{ field.id }}" class='label'>{{field.label.text}}:</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class='control'>
+                        {{ field(class='select is-small is-fullwidth') }}
+                    </div> 
+                </div>
+            </div>
+        {% elif field.type == 'DateField' %}
+            <div class="field-label">
+                <label for="{{ field.id }}" class='label'>{{field.label.text}}:</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class='control'>
+                        {{ field(type='date') }}
                     </div>
-            {% elif field.type == 'DateField' %}
-                <label for="{{ field.id }}" class='label'>{{field.label.text}}</label>
-                <div class='control'>
-                    {{ field(type='date') }}
                 </div>
-            {% else %}
-                <div class='control'>
-                    {{ field(placeholder=field.label.text, class='input') }}
+            </div>
+        {% else %}
+            <div class="field-body">
+                <div class="field">
+                    <div class='control'>
+                        {{ field(placeholder=field.label.text, class='input') }}
+                    </div>
                 </div>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
     </div>
 {% endmacro %}
 
@@ -89,17 +103,34 @@
     </tr>
 {% endmacro %}
 
-
-
-<!-- May not need code below based on styling options -->
-{% macro render_account_options(account) %}
-<option data-id="{{ account.id }}" name="{{ account.id }}" value="{{ account.id }}">{{account.name}}</option>
+{% macro render_contact(contact) %}
+    <tr>
+        <th><a href='{{contact.account.id}}'>{{contact.account.name}}</a></th>
+        <th>{{contact.owner.fullname}}</th>
+        <th>{{contact.first_name}}</th>
+        <th>{{contact.last_name}}</th>
+        <th>{{contact.phone}}</th>
+        <th>{{contact.email}}</th>
+        <th>{{contact.title}}</th>
+        <th>{{contact.department}}</th>
+        <th>{{contact.street}}</th>
+        <th>{{contact.city}}</th>
+        <th>{{contact.state}}</th>
+        <th>{{contact.country}}</th>
+        <th>{{contact.created_by.fullname}}</th>
+    </tr>
 {% endmacro %}
 
-{% macro render_user_options(user) %}
-<option data-id="{{ user.id }}" name="{{ user.id }}" value="{{ user.id }}">{{user.fullname}}</option>
-{% endmacro %}
-
-{% macro render_contact_options(contact) %}
-<option data-id="{{ contact.id }}" name="{{ contact.id }}" value="{{ contact.id }}">{{contact.first_name + ' ' + contact.last_name}}</option>
+{% macro render_opportunity(opportunity) %}
+    <tr>
+        <th>{{opportunity.account.name}}</th>
+        <th>{{opportunity.owner.name}}</th>
+        <th>{{opportunity.name}}</th>
+        <th>{{opportunity.opportunity_type}}</th>
+        <th>{{opportunity.primary_contact.fullname}}</th>
+        <th>{{opportunity.mrr}}</th>
+        <th>{{opportunity.arr}}</th>
+        <th>{{opportunity.stage}}</th>
+        <th>{{opportunity.created_by}}</th>
+    </tr>
 {% endmacro %}

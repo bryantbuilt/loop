@@ -1,24 +1,40 @@
-{% from 'macros.html' import render_field, render_account_options, render_user_options, render_contact_options %}
+{% extends 'index.html' %}
 
-<form method="POST" action="" class="form">
-    {{ form.hidden_tag() }}
-    <!-- <select name=account>
-        {% for account in accounts %}
-            {{render_account_options(account)}}
-        {% endfor %}
-    </select> -->
-    {% for field in form %}
-        {{ render_field(field) }}
-    {% endfor %}
-    <!-- <select name=owner>
-    {% for user in users %}
-        {{render_user_options(user)}}
-    {% endfor %}
-    </select>
-    <select name=contact>
-        {% for contact in contacts %}
-            {{render_contact_options(contact)}}
-        {% endfor %}
-    </select> -->
-    <button type="submit" id="submit">Save</button>
-</form>
+{% from 'macros.html' import render_opportunity %}
+
+{% block content %}
+<div class='container'>
+    <div class='level'>
+        <div class="level-item"><p>Graph 1</p></div>
+        <div class="level-item"><p>Graph 2</p></div>
+        <div class="level-item"><p>Graph 3</p></div>
+    </div>
+    <div class='level'>
+            <div class="level-right">
+                <div class="level-item">
+                    <a class='button' href="{{url_for('create_opportunity')}}">New Opportunity</a>
+                </div>
+            </div>
+    </div>
+    <table class="table is-fullwidth is-hoverable">
+        <thead>
+            <tr>
+                <th>Account Name</th>
+                <th>Owner</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Primary Contact</th>
+                <th>MRR</th>
+                <th>ARR</th>
+                <th>Stage</th>
+                <th>Created By</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for opportunity in opportunities %}
+                {{ render_opportunity(opportunity) }}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -95,13 +95,11 @@ def logout():
 @app.route('/account/<accountid>', methods=['GET'])
 @app.route('/account/<accountid>/r', methods=['GET'])
 def account(accountid=None):
-    form = forms.AccountForm()
-    form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
     accounts = models.Account.select()
     if accountid != None:
         account = models.Account.select().where(accountid == models.Account.id).get()
-        return render_template('account-detail.html', account=account)
-    return render_template('account.html', form=form, accounts=accounts)
+        return render_template('account-detail.html', account=account, user=g.user._get_current_object())
+    return render_template('account.html', accounts=accounts)
 
 @app.route('/account/create', methods=['GET','POST'])
 @login_required
@@ -149,12 +147,29 @@ def edit_account(accountid):
         return redirect(url_for('account', accountid=accountid))
     return render_template('edit.html', form=form, record=record)
 
+@app.route('/account/<accountid>/delete', methods=['GET','POST'])
+@login_required
+def delete_account(accountid):
+    user = g.user._get_current_object()
+    account = models.Account.select().where(models.Account.id == accountid).get()
+    if ((accountid != None) and (user.id == account.owner.id)):
+        delete_account = models.Account.delete().where(models.Account.id == accountid)
+        delete_account.delete_instance(recursive=False, delete_nullable=False)
+        return redirect(url_for('account'))
+    return render_template('account.html')
+
 # Contact CRUD
-# @app.route('/contact', methods=['GET'])
-# @app.route('/contact/', methods=['GET'])
-# @app.route('/contact/<contactid>', methods=['GET'])
-# @app.route('/contact/<contactid>/r', methods=['GET'])
-# def contact(contactid=None):
+@app.route('/contact', methods=['GET'])
+@app.route('/contact/', methods=['GET'])
+@app.route('/contact/r', methods=['GET'])
+@app.route('/contact/<contactid>', methods=['GET'])
+@app.route('/contact/<contactid>/r', methods=['GET'])
+def contact(contactid=None):
+    contacts = models.Contact.select()
+    if contactid != None:
+        contact = models.Contact.select().where(models.Contact.id == contactid).get()
+        return render_template('contact-detail.html', contact=contact, user=g.user._get_current_object())
+    return render_template('contact.html', contacts=contacts)
 
 
 @app.route('/contact/create', methods=['GET','POST'])
@@ -184,12 +199,13 @@ def create_contact():
 
 @app.route('/contact/<contactid>/edit', methods=['GET','POST'])
 @login_required
-def contact():
+def edit_contact(contactid):
     form = forms.ContactForm()
     form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
+    record = models.Contact.select().where(contactid == models.Contact.id).dicts().get()
     if form.validate_on_submit():
-        flash("Contact created!", 'success')
+        flash("Contact edited", 'success')
         edited_contact = models.Contact.update(
             account = form.account.data,
             owner = form.owner.data,
@@ -205,12 +221,27 @@ def contact():
             phone = form.phone.data
         )
         edited_contact.execute()
-        # Add path back to contact detail
-    return render_template('edit.html', form=form)
+        return redirect(url_for('contact'))
+    return render_template('edit.html', form=form, record=record)
 
-@app.route('/opportunity', methods=['GET','POST'])
+# Add contact delete
+
+# Opportunity CRUD
+@app.route('/opportunity', methods=['GET'])
+@app.route('/opportunity/', methods=['GET'])
+@app.route('/opportunity/r', methods=['GET'])
+@app.route('/opportunity/<opportunityid>', methods=['GET'])
+@app.route('/opportunity/<opportunityid>/r', methods=['GET'])
+def opportunity(opportunityid=None):
+    opportunities = models.Opportunity.select()
+    if opportunityid != None:
+        opportunity = models.Opportunity.select().where(models.Opportunity.id == opportunityid).get()
+        return render_template('opportunity-detail.html', opportunity=opportunity, user=g.user._get_current_object())
+    return render_template('opportunity.html', opportunities=opportunities)
+
+@app.route('/opportunity/create', methods=['GET','POST'])
 @login_required
-def opportunity():
+def create_opportunity():
     form = forms.OpportunityForm()
     form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
@@ -228,8 +259,34 @@ def opportunity():
             arr = form.arr.data,
             stage = form.stage.data
         )
-    return render_template('opportunity.html', form=form)
+        return redirect('opportunity')
+    return render_template('create.html', form=form)
 
+@app.route('/opportunity/<opportunityid>/edit', methods=['GET','POST'])
+@login_required
+def update_opportunity(opportunityid):
+    form = forms.OpportunityForm()
+    form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
+    form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
+    form.primary_contact.choices = [(str(contact.id), (contact.first_name + ' ' + contact.last_name)) for contact in models.Contact.select()]
+    record = models.Opportunity.select().where(opportunityid == models.Opportunity.id).dicts().get()
+    if form.validate_on_submit():
+        flash("Opportunity updated", 'success')
+        edited_opp = models.Opportunity.update(
+            account = form.account.data,
+            name = form.name.data,
+            owner = form.owner.data,
+            opportunity_type = form.opportunity_type.data,
+            primary_contact = form.primary_contact.data,
+            mrr = form.mrr.data,
+            arr = form.arr.data,
+            stage = form.stage.data
+        ).where(opportunityid == models.Opportunity.id)
+        edited_opp.execute()
+        return redirect('opportunity')
+    return render_template('edit.html', form=form, record=record)
+
+# Subscription CRUD
 @app.route('/subscription', methods=['GET','POST'])
 @login_required
 def subscription():
@@ -279,6 +336,7 @@ def edit_subscription(subscriptionid):
         edit_subscription.execute()
     return render_template('edit.html', form=form, record=record)
 
+# Product CRUD
 @app.route('/product', methods=['GET','POST'])
 @login_required
 def product():
@@ -291,6 +349,7 @@ def product():
         )
     return render_template('product.html', form=form)
 
+# User CRUD
 
 if __name__ == '__main__':
     models.initialize()
