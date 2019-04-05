@@ -88,18 +88,20 @@ def logout():
     flash("You've been logged out", 'success')
     return redirect(url_for('index'))
 
-# Account Routes
+# Account CRUD
 @app.route('/account', methods=['GET'])
 @app.route('/account/', methods=['GET'])
+@app.route('/account/r', methods=['GET'])
 @app.route('/account/<accountid>', methods=['GET'])
 @app.route('/account/<accountid>/r', methods=['GET'])
 def account(accountid=None):
     form = forms.AccountForm()
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
+    accounts = models.Account.select()
     if accountid != None:
         account = models.Account.select().where(accountid == models.Account.id).get()
         return render_template('account-detail.html', account=account)
-    return render_template('account.html', form=form)
+    return render_template('account.html', form=form, accounts=accounts)
 
 @app.route('/account/create', methods=['GET','POST'])
 @login_required
@@ -147,9 +149,17 @@ def edit_account(accountid):
         return redirect(url_for('account', accountid=accountid))
     return render_template('edit.html', form=form, record=record)
 
-@app.route('/contact', methods=['GET','POST'])
+# Contact CRUD
+# @app.route('/contact', methods=['GET'])
+# @app.route('/contact/', methods=['GET'])
+# @app.route('/contact/<contactid>', methods=['GET'])
+# @app.route('/contact/<contactid>/r', methods=['GET'])
+# def contact(contactid=None):
+
+
+@app.route('/contact/create', methods=['GET','POST'])
 @login_required
-def contact():
+def create_contact():
     form = forms.ContactForm()
     form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
@@ -170,7 +180,33 @@ def contact():
             email = form.email.data,
             phone = form.phone.data
         )
-    return render_template('contact.html', form=form)
+    return render_template('create.html', form=form)
+
+@app.route('/contact/<contactid>/edit', methods=['GET','POST'])
+@login_required
+def contact():
+    form = forms.ContactForm()
+    form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
+    form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
+    if form.validate_on_submit():
+        flash("Contact created!", 'success')
+        edited_contact = models.Contact.update(
+            account = form.account.data,
+            owner = form.owner.data,
+            first_name = form.first_name.data,
+            last_name = form.last_name.data,
+            title = form.title.data,
+            department = form.department.data,
+            street = form.street.data,
+            city = form.city.data,
+            state = form.state.data,
+            country = form.country.data,
+            email = form.email.data,
+            phone = form.phone.data
+        )
+        edited_contact.execute()
+        # Add path back to contact detail
+    return render_template('edit.html', form=form)
 
 @app.route('/opportunity', methods=['GET','POST'])
 @login_required
@@ -179,27 +215,20 @@ def opportunity():
     form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
     form.primary_contact.choices = [(str(contact.id), (contact.first_name + ' ' + contact.last_name)) for contact in models.Contact.select()]
-    # accounts = models.Account.select()
-    # users = models.User.select()
-    # contacts = models.Contact.select()
     if form.validate_on_submit():
         flash("Opportunity created", 'success')
         models.Opportunity.create_opportunity(
             account = form.account.data,
-            # account = request.form.get('account'),
             name = form.name.data,
             created_by = g.user._get_current_object(),
             owner = form.owner.data,
-            # owner = request.form.get('owner'),
             opportunity_type = form.opportunity_type.data,
             primary_contact = form.primary_contact.data,
-            # primary_contact = request.form.get('contact'),
             mrr = form.mrr.data,
             arr = form.arr.data,
             stage = form.stage.data
         )
     return render_template('opportunity.html', form=form)
-# , accounts=accounts, users=users, contacts=contacts)
 
 @app.route('/subscription', methods=['GET','POST'])
 @login_required
@@ -248,7 +277,7 @@ def edit_subscription(subscriptionid):
             arr = form.arr.data,
         ).where(subscriptionid == models.Subscription.id)
         edit_subscription.execute()
-    return render_template('subscription-edit.html', form=form, record=record)
+    return render_template('edit.html', form=form, record=record)
 
 @app.route('/product', methods=['GET','POST'])
 @login_required

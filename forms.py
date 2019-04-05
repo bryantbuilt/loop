@@ -57,11 +57,11 @@ class AccountForm(Form):
     name = StringField('Name')
     owner = SelectField('Owner')
     account_type = StringField('Type')
+    website = StringField('Website')
     street = StringField('Street')
     city = StringField('City')
     state = StringField('State')
     country = StringField('Country')
-    website = StringField('Website')
     mrr = DecimalField('MRR')
     arr = DecimalField('ARR')
     # Need Owner and Created By

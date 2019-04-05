@@ -1,26 +1,32 @@
 {% macro render_field(field) %}
-    <div class="field control">
-        {% if field.errors %}
-            {% for error in field.errors %}
-                <div class="notification error">{{ error }}</div>
-            {% endfor %}
-        {% endif %}
-        {% if field.type == 'SelectField' %}
+    <div class="field">
+        <div class="control">
+            {% if field.errors %}
+                {% for error in field.errors %}
+                    <div class="notification error">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+            {% if field.type == 'SelectField' %}
+                    <label for="{{ field.id }}" class='label'>{{field.label.text}}</label>
+                    <div class='select'>
+                        {{ field(class='select') }}
+                    </div>
+            {% elif field.type == 'DateField' %}
                 <label for="{{ field.id }}" class='label'>{{field.label.text}}</label>
-                <div class='select'>
-                    {{ field() }}
+                <div class='control'>
+                    {{ field(type='date') }}
                 </div>
-        {% elif field.type == 'DateField' %}
-            <label for="{{ field.id }}" class='label'>{{field.label.text}}</label>
-            {{ field(type='date') }}
-        {% else %}
-            {{ field(placeholder=field.label.text, class='input') }}
-        {% endif %}
+            {% else %}
+                <div class='control'>
+                    {{ field(placeholder=field.label.text, class='input') }}
+                </div>
+            {% endif %}
+        </div>
     </div>
 {% endmacro %}
 
 {% macro render_edit_field(field,record) %}
-    <div class="field">
+    <div class="field is-horizontal">
         {% for key, value in record.items() %}
             {% if key == field.id %}
                 {% if field.errors %}
@@ -29,18 +35,60 @@
                     {% endfor %}
                 {% endif %}
                 {% if field.type == 'SelectField' %}
-                    <label for="{{ field.id }}">{{field.label.text}}</label>
-                    {{ field(value=value)}}
+                    <div class="field-label">
+                        <label for="{{ field.id }}" class='label'>{{field.label.text}}:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                {{ field(class='select is-small is-fullwidth', value=value)}}
+                            </div>
+                        </div>
+                    </div>
                 {% elif field.type == 'DateField' %}
-                    <label for="{{ field.id }}">{{field.label.text}}</label>
-                    {{ field(type='date',value=value) }}
+                    <div class="field-label">
+                        <label for="{{ field.id }}" class='label'>{{field.label.text}}:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                {{ field(type='date',class='input',value=value) }}
+                            </div>
+                        </div>
+                    </div>
                 {% else %}
-                    {{ field(placeholder=field.label.text, value=value) }}
+                    <div class="field-label">
+                        <label for="{{ field.id }}" class='label'>{{field.label.text}}:</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                {{ field(class='input', placeholder=field.label.text, value=value) }}
+                            </div>
+                        </div>
+                    </div>
                 {% endif %}
             {% endif %}
         {% endfor %}
     </div>
 {% endmacro %}
+
+{% macro render_account(account) %}
+    <tr>
+        <th><a href='{{account.id}}'>{{account.name}}</a></th>
+        <th>{{account.owner.fullname}}</th>
+        <th>{{account.account_type}}</th>
+        <th>{{account.street}}</th>
+        <th>{{account.city}}</th>
+        <th>{{account.state}}</th>
+        <th>{{account.country}}</th>
+        <th>{{account.website}}</th>
+        <th>{{account.mrr}}</th>
+        <th>{{account.arr}}</th>
+        <th>{{account.created_by.fullname}}</th>
+    </tr>
+{% endmacro %}
+
 
 
 <!-- May not need code below based on styling options -->
