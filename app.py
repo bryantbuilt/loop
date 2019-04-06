@@ -287,9 +287,21 @@ def update_opportunity(opportunityid):
     return render_template('edit.html', form=form, record=record)
 
 # Subscription CRUD
-@app.route('/subscription', methods=['GET','POST'])
+@app.route('/subscription', methods=['GET'])
+@app.route('/subscription/', methods=['GET'])
+@app.route('/subscription/r', methods=['GET'])
+@app.route('/subscription/<subscriptionid>', methods=['GET'])
+@app.route('/subscription/<subscriptionid>/r', methods=['GET'])
+def subscription(subscriptionid=None):
+    subscriptions = models.Subscription.select()
+    if subscriptionid != None:
+        subscription = models.Subscription.select().where(models.Subscription.id == subscriptionid).get()
+        return render_template('subscription-detail.html', subscription=subscription, user=g.user._get_current_object())
+    return render_template('subscription.html', subscriptions=subscriptions)
+
+@app.route('/subscription/create', methods=['GET','POST'])
 @login_required
-def subscription():
+def create_subscription():
     form = forms.SubscriptionForm()
     form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
     form.opportunity.choices = [(str(opportunity.id), opportunity.name) for opportunity in models.Opportunity.select()]
@@ -309,7 +321,7 @@ def subscription():
             arr = form.arr.data,
             created_by = g.user._get_current_object()
         )
-    return render_template('subscription.html', form=form)
+    return render_template('create.html', form=form)
 
 @app.route('/subscription/<subscriptionid>/edit', methods=['GET','POST'])
 @login_required
@@ -350,6 +362,10 @@ def product():
     return render_template('product.html', form=form)
 
 # User CRUD
+@app.route('/profile', methods=['GET','POST'])
+@login_required
+def profile():
+    return render_template('profile.html')
 
 if __name__ == '__main__':
     models.initialize()

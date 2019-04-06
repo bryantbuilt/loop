@@ -29,7 +29,7 @@
                 <div class="navbar-item">
                   <div class="buttons">
                     {% if current_user.is_authenticated %}
-                    <a class="button is-light has-text-weight-semibold" href="" title="profile">Profile</a>
+                    <a class="button is-light has-text-weight-semibold" href="{{url_for('profile')}}" title="profile">Profile</a>
                     <a class="button is-light has-text-weight-semibold" href="{{ url_for('logout') }}" title="logout">Logout</a>
                     {% else %}
                     <a class="button is-primary has-text-weight-semibold" href="{{ url_for('signup') }}" title="register">Sign Up</a>
@@ -49,15 +49,15 @@
             <ul class="menu-list">
                 <li><a href="{{url_for('account')}}">Accounts</a></li>
                 <li><a href="{{url_for('contact')}}">Contacts</a></li>
-                <li><a>Opportunities</a></li>
-                <li><a>Subscriptions</a></li>
+                <li><a href="{{url_for('opportunity')}}">Opportunities</a></li>
+                <li><a href="{{url_for('subscription')}}">Subscriptions</a></li>
             </ul>
             <p class="menu-label">
                 Settings
             </p>
             <ul class="menu-list">
                 <li><a>Users</a></li>
-                <li><a>Products</a></li>
+                <li><a href="{{url_for('product')}}">Products</a></li>
             </ul>
         </aside>
         <section class='column'>
