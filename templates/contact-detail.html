@@ -16,7 +16,7 @@
             <p>Department: {{contact.department}}</p>
             <p>Phone: {{contact.phone}}</p>
             <p>Email: {{contact.email}}</p>
-            <p>Created By: {{account.created_by.fullname}}</p>
+            <p>Created By: {{contact.created_by.fullname}}</p>
         </div>
     </div>
     {% if user.id == contact.owner.id %}

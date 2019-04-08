@@ -4,7 +4,7 @@ from peewee import *
 from flask_login import UserMixin
 from flask_bcrypt import generate_password_hash
 
-DATABASE = SqliteDatabase('loop.db')
+DATABASE = SqliteDatabase('loop.db', pragmas={'foreign_keys':1})
 
 class User(UserMixin, Model):
     username = CharField(unique=True)
@@ -31,8 +31,8 @@ class User(UserMixin, Model):
 
 class Account(Model):
     name = CharField()
-    owner = ForeignKeyField(model=User,backref='owner')
-    created_by = ForeignKeyField(model=User,backref='creator')
+    owner = ForeignKeyField(model=User, null=True, backref='owner')
+    created_by = ForeignKeyField(model=User, null=True, backref='creator')
     account_type = CharField()
     street = CharField()
     city = CharField()
@@ -61,9 +61,9 @@ class Account(Model):
             arr = arr)
 
 class Contact(Model):
-    account = ForeignKeyField(model=Account,backref='contact')
-    owner = ForeignKeyField(model=User,backref='owner')
-    created_by = ForeignKeyField(model=User,backref='creator')
+    account = ForeignKeyField(model=Account, null=True, backref='contact')
+    owner = ForeignKeyField(model=User, null=True, backref='owner')
+    created_by = ForeignKeyField(model=User, null=True, backref='creator')
     first_name = CharField()
     last_name = CharField()
     title = CharField()
@@ -95,15 +95,15 @@ class Contact(Model):
             email = email)
 
 class Opportunity(Model):
-    account = ForeignKeyField(model=Account,backref='opportunity')
+    account = ForeignKeyField(model=Account, null=True, backref='opportunity')
     name = CharField()
-    owner = ForeignKeyField(model=User,backref='owner')
+    owner = ForeignKeyField(model=User, null=True, backref='owner')
     opportunity_type = CharField()
-    primary_contact = ForeignKeyField(model=Contact,backref='opportunity')
+    primary_contact = ForeignKeyField(model=Contact, null=True, backref='opportunity')
     mrr = DecimalField()
     arr = DecimalField()
     stage = CharField()
-    created_by = ForeignKeyField(model=User,backref='creator')
+    created_by = ForeignKeyField(model=User, null=True, backref='creator')
     class Meta:
         database = DATABASE
     
@@ -121,8 +121,8 @@ class Opportunity(Model):
             stage = stage)
     
 class Subscription(Model):
-    account = ForeignKeyField(model=Account,backref='subscription')
-    opportunity = ForeignKeyField(model=Opportunity,backref='opportunity')
+    account = ForeignKeyField(model=Account, null=True, backref='subscription')
+    opportunity = ForeignKeyField(model=Opportunity, null=True, backref='opportunity')
     product = CharField()
     list_price = DecimalField()
     discount = DecimalField()
@@ -131,7 +131,7 @@ class Subscription(Model):
     sub_end_date = DateField()
     mrr = DecimalField()
     arr = DecimalField()
-    created_by = ForeignKeyField(model=User,backref='creator')
+    created_by = ForeignKeyField(model=User, null=True, backref='creator')
 
     class Meta:
         database = DATABASE

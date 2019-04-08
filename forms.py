@@ -86,7 +86,7 @@ class OpportunityForm(Form):
     primary_contact = SelectField('Primary Contact')
     mrr = DecimalField('MRR')
     arr = DecimalField('ARR')
-    stage = StringField('Stage', choices=[('qualifying','Qualifying'),('demo','Demo'),('pricing','Pricing'),('won','Closed Won'),('lost','Lost')])
+    stage = SelectField('Stage', choices=[('qualifying','Qualifying'),('demo','Demo'),('pricing','Pricing'),('won','Closed Won'),('lost','Lost')])
 
 class SubscriptionForm(Form):
     account = SelectField('Account')

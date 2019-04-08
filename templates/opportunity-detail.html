@@ -6,14 +6,14 @@
             <p>Name: {{opportunity.name}}</p>
             <p>Account: {{opportunity.account.name}}</p>
             <p>Type: {{opportunity.opportunity_type}}</p>
-            <p>Primary Contact: {{opportunity.primary_contact.first_name + ' ' + opportunity.primary_contact.last_name}}</p>
+            <p>Primary Contact: {% if opportunity.primary_contact %}{{opportunity.primary_contact.first_name + ' ' + opportunity.primary_contact.last_name}}{% endif %}</p>
         </div>
         <div class='column'>
             <p>Owner: {{opportunity.owner.fullname}}</p>
             <p>MRR: {{opportunity.mrr}}</p>
             <p>ARR: {{opportunity.arr}}</p>
             <p>Stage: {{opportunity.stage}}</p>
-            <p>Created By: {{account.created_by.fullname}}</p>
+            <p>Created By: {{opportunity.created_by.fullname}}</p>
         </div>
     </div>
     {% if user.id == opportunity.owner.id %}

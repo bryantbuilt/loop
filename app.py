@@ -121,6 +121,7 @@ def create_account(accountid=None):
             mrr = form.mrr.data,
             arr = form.arr.data
         )
+        return redirect ('account')
     return render_template('create.html', form=form)
 
 @app.route('/account/<accountid>/edit', methods=['GET','POST'])
@@ -195,6 +196,7 @@ def create_contact():
             email = form.email.data,
             phone = form.phone.data
         )
+        return redirect ('contact')
     return render_template('create.html', form=form)
 
 @app.route('/contact/<contactid>/edit', methods=['GET','POST'])
@@ -224,7 +226,16 @@ def edit_contact(contactid):
         return redirect(url_for('contact'))
     return render_template('edit.html', form=form, record=record)
 
-# Add contact delete
+@app.route('/contact/<contactid>/delete', methods=['GET','POST'])
+@login_required
+def delete_contact(contactid):
+    user = g.user._get_current_object()
+    contact = models.Contact.select().where(models.Contact.id == contactid).get()
+    if ((contactid != None) and (user.id == contact.owner.id)):
+        delete_contact = models.Contact.select().where(models.Contact.id == contactid).get()
+        delete_contact.delete_instance(recursive=True, delete_nullable=False)
+        return redirect(url_for('contact'))
+    return render_template('contact.html')
 
 # Opportunity CRUD
 @app.route('/opportunity', methods=['GET'])
@@ -264,7 +275,7 @@ def create_opportunity():
 
 @app.route('/opportunity/<opportunityid>/edit', methods=['GET','POST'])
 @login_required
-def update_opportunity(opportunityid):
+def edit_opportunity(opportunityid):
     form = forms.OpportunityForm()
     form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
@@ -285,6 +296,17 @@ def update_opportunity(opportunityid):
         edited_opp.execute()
         return redirect('opportunity')
     return render_template('edit.html', form=form, record=record)
+
+@app.route('/opportunity/<opportunityid>/delete', methods=['GET','POST'])
+@login_required
+def delete_opportunity(opportunityid):
+    user = g.user._get_current_object()
+    opportunity = models.Opportunity.select().where(models.Opportunity.id == opportunityid).get()
+    if ((opportunityid != None) and (user.id == opportunity.owner.id)):
+        delete_opportunity = models.Opportunity.select().where(models.Opportunity.id == opportunityid).get()
+        delete_opportunity.delete_instance(recursive=False, delete_nullable=False)
+        return redirect(url_for('opportunity'))
+    return render_template('opportunity.html')
 
 # Subscription CRUD
 @app.route('/subscription', methods=['GET'])

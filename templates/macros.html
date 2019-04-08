@@ -89,48 +89,71 @@
 
 {% macro render_account(account) %}
     <tr>
-        <th><a href='{{account.id}}'>{{account.name}}</a></th>
-        <th>{{account.owner.fullname}}</th>
-        <th>{{account.account_type}}</th>
-        <th>{{account.street}}</th>
-        <th>{{account.city}}</th>
-        <th>{{account.state}}</th>
-        <th>{{account.country}}</th>
-        <th>{{account.website}}</th>
-        <th>{{account.mrr}}</th>
-        <th>{{account.arr}}</th>
-        <th>{{account.created_by.fullname}}</th>
+        <td><a href='{{account.id}}'>{{account.name}}</a></td>
+        <td>{{account.owner.fullname}}</td>
+        <td>{{account.account_type}}</td>
+        <td>{{account.street}}</td>
+        <td>{{account.city}}</td>
+        <td>{{account.state}}</td>
+        <td>{{account.country}}</td>
+        <td>{{account.website}}</td>
+        <td>{{account.mrr}}</td>
+        <td>{{account.arr}}</td>
+        <td>{{account.created_by.fullname}}</td>
     </tr>
 {% endmacro %}
 
 {% macro render_contact(contact) %}
     <tr>
-        <th><a href='{{contact.account.id}}'>{{contact.account.name}}</a></th>
-        <th>{{contact.owner.fullname}}</th>
-        <th>{{contact.first_name}}</th>
-        <th>{{contact.last_name}}</th>
-        <th>{{contact.phone}}</th>
-        <th>{{contact.email}}</th>
-        <th>{{contact.title}}</th>
-        <th>{{contact.department}}</th>
-        <th>{{contact.street}}</th>
-        <th>{{contact.city}}</th>
-        <th>{{contact.state}}</th>
-        <th>{{contact.country}}</th>
-        <th>{{contact.created_by.fullname}}</th>
+        <td><a href='{{contact.account.id}}'>{{contact.account.name}}</a></td>
+        <td>{{contact.owner.fullname}}</td>
+        <td>{{contact.first_name}}</td>
+        <td>{{contact.last_name}}</td>
+        <td>{{contact.phone}}</td>
+        <td>{{contact.email}}</td>
+        <td>{{contact.title}}</td>
+        <td>{{contact.department}}</td>
+        <td>{{contact.street}}</td>
+        <td>{{contact.city}}</td>
+        <td>{{contact.state}}</td>
+        <td>{{contact.country}}</td>
+        <td>{{contact.created_by.fullname}}</td>
     </tr>
 {% endmacro %}
 
 {% macro render_opportunity(opportunity) %}
     <tr>
-        <th>{{opportunity.account.name}}</th>
-        <th>{{opportunity.owner.name}}</th>
-        <th>{{opportunity.name}}</th>
-        <th>{{opportunity.opportunity_type}}</th>
-        <th>{{opportunity.primary_contact.fullname}}</th>
-        <th>{{opportunity.mrr}}</th>
-        <th>{{opportunity.arr}}</th>
-        <th>{{opportunity.stage}}</th>
-        <th>{{opportunity.created_by}}</th>
+        <td>{{opportunity.account.name}}</td>
+        <td>{{opportunity.owner.fullname}}</td>
+        <td>{{opportunity.name}}</td>
+        <td>{{opportunity.opportunity_type}}</td>
+        <td>{% if opportunity.primary_contact %}{{opportunity.primary_contact.first_name + ' ' + opportunity.primary_contact.last_name}}</td>{% endif %}
+        <td>{{opportunity.mrr}}</td>
+        <td>{{opportunity.arr}}</td>
+        <td>{{opportunity.stage}}</td>
+        <td>{{opportunity.created_by}}</td>
+    </tr>
+{% endmacro %}
+
+{% macro render_subscription(subscription) %}
+    <tr>
+        <td>{{subscription.account.name}}</td>
+        <td>{{subscription.opportunity.name}}</td>
+        <td>{{subscription.product.name}}</td>
+        <td>{{subscription.list_price}}</td>
+        <td>{{subscription.discount}}</td>
+        <td>{{subscription.sale_price}}</td>
+        <td>{{subscription.sub_start_date}}</td>
+        <td>{{subscription.sub_end_date}}</td>
+        <td>{{subscription.mrr}}</td>
+        <td>{{subscription.arr}}</td>
+        <td>{{subscription.created_by.fullname}}</td>
+    </tr>
+{% endmacro %}
+
+{% macro render_product(product) %}
+    <tr>
+        <td>{{product.name}}</td>
+        <td>{{product.price}}</td>
     </tr>
 {% endmacro %}
