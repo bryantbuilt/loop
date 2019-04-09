@@ -1,5 +1,5 @@
 from flask import Flask, g
-from flask import render_template, flash, redirect, url_for, request, jsonify
+from flask import render_template, flash, redirect, url_for, request, jsonify, Markup
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_bcrypt import check_password_hash
 from peewee import fn
@@ -19,7 +19,6 @@ login_manager = LoginManager()
 # sets up our login for the app
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-
 
 @login_manager.user_loader
 def load_user(userid):
@@ -46,6 +45,23 @@ def after_request(response):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+labels = [
+    'JAN', 'FEB', 'MAR', 'APR',
+    'MAY', 'JUN', 'JUL', 'AUG',
+    'SEP', 'OCT', 'NOV', 'DEC'
+]
+
+values = [
+    967.67, 1190.89, 1079.75, 1349.19,
+    2328.91, 2504.28, 2873.83, 4764.87,
+    4349.29, 6458.30, 9907, 16297
+]
+
+colors = [
+    "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA",
+    "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
+    "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
@@ -93,13 +109,17 @@ def logout():
 @app.route('/account/', methods=['GET'])
 @app.route('/account/r', methods=['GET'])
 @app.route('/account/<accountid>', methods=['GET'])
+@app.route('/account/<accountid>/', methods=['GET'])
 @app.route('/account/<accountid>/r', methods=['GET'])
 def account(accountid=None):
     accounts = models.Account.select()
+    title = 'Accounts'
+    bar_labels=labels
+    bar_values=values
     if accountid != None:
         account = models.Account.select().where(accountid == models.Account.id).get()
         return render_template('account-detail.html', account=account, user=g.user._get_current_object())
-    return render_template('account.html', accounts=accounts)
+    return render_template('account.html', accounts=accounts, title=title)
 
 @app.route('/account/create', methods=['GET','POST'])
 @login_required
@@ -155,7 +175,7 @@ def delete_account(accountid):
     account = models.Account.select().where(models.Account.id == accountid).get()
     if ((accountid != None) and (user.id == account.owner.id)):
         delete_account = models.Account.delete().where(models.Account.id == accountid)
-        delete_account.delete_instance(recursive=False, delete_nullable=False)
+        delete_account.delete_instance(recursive=True, delete_nullable=False)
         return redirect(url_for('account'))
     return render_template('account.html')
 
@@ -164,6 +184,7 @@ def delete_account(accountid):
 @app.route('/contact/', methods=['GET'])
 @app.route('/contact/r', methods=['GET'])
 @app.route('/contact/<contactid>', methods=['GET'])
+@app.route('/contact/<contactid>/', methods=['GET'])
 @app.route('/contact/<contactid>/r', methods=['GET'])
 def contact(contactid=None):
     contacts = models.Contact.select()
@@ -242,6 +263,7 @@ def delete_contact(contactid):
 @app.route('/opportunity/', methods=['GET'])
 @app.route('/opportunity/r', methods=['GET'])
 @app.route('/opportunity/<opportunityid>', methods=['GET'])
+@app.route('/opportunity/<opportunityid>/', methods=['GET'])
 @app.route('/opportunity/<opportunityid>/r', methods=['GET'])
 def opportunity(opportunityid=None):
     opportunities = models.Opportunity.select()
@@ -304,7 +326,7 @@ def delete_opportunity(opportunityid):
     opportunity = models.Opportunity.select().where(models.Opportunity.id == opportunityid).get()
     if ((opportunityid != None) and (user.id == opportunity.owner.id)):
         delete_opportunity = models.Opportunity.select().where(models.Opportunity.id == opportunityid).get()
-        delete_opportunity.delete_instance(recursive=False, delete_nullable=False)
+        delete_opportunity.delete_instance(recursive=True, delete_nullable=False)
         return redirect(url_for('opportunity'))
     return render_template('opportunity.html')
 
@@ -313,6 +335,7 @@ def delete_opportunity(opportunityid):
 @app.route('/subscription/', methods=['GET'])
 @app.route('/subscription/r', methods=['GET'])
 @app.route('/subscription/<subscriptionid>', methods=['GET'])
+@app.route('/subscription/<subscriptionid>/', methods=['GET'])
 @app.route('/subscription/<subscriptionid>/r', methods=['GET'])
 def subscription(subscriptionid=None):
     subscriptions = models.Subscription.select()
@@ -370,18 +393,70 @@ def edit_subscription(subscriptionid):
         edit_subscription.execute()
     return render_template('edit.html', form=form, record=record)
 
+@app.route('/subscription/<subscriptionid>/delete', methods=['GET','POST'])
+@login_required
+def delete_subscription(subscriptionid):
+    user = g.user._get_current_object()
+    subscription = models.Subscription.select().where(models.Subscription.id == subscriptionid).get()
+    if subscriptionid != None:
+        # subscription has no owner, create logic
+        delete_subscription = models.Subscription.select().where(models.Subscription.id == subscriptionid).get()
+        delete_subscription.delete_instance(recursive=True, delete_nullable=False)
+        return redirect(url_for('subscription'))
+    return render_template('subscription.html')
+
 # Product CRUD
 @app.route('/product', methods=['GET','POST'])
+@app.route('/product/', methods=['GET','POST'])
+@app.route('/product/r', methods=['GET','POST'])
+@app.route('/product/<productid>', methods=['GET','POST'])
+@app.route('/product/<productid>/', methods=['GET','POST'])
+@app.route('/product/<productid>/r', methods=['GET','POST'])
 @login_required
-def product():
+def product(productid=None):
     form = forms.ProductForm()
+    products = models.Product.select()
     if form.validate_on_submit():
         flash('Product Created','success')
         models.Product.create_product(
             name = form.name.data,
             price = form.price.data
         )
-    return render_template('product.html', form=form)
+        return redirect('product')
+    return render_template('product.html', form=form, products=products)
+
+@app.route('/product/<productid>/edit', methods=['GET','POST'])
+@login_required
+def edit_product(productid):
+    form = forms.ProductForm()
+    record = models.Product.select().where(models.Product.id == productid).dicts().get()
+    if form.validate_on_submit():
+        flash('Product updated','success')
+        edit_product = models.Product.update(
+            name = form.name.data,
+            price = form.price.data
+        ).where(productid == models.Product.id)
+        edit_product.execute()
+        return redirect('product')
+    return render_template('edit.html', form=form, record=record)
+
+@app.route('/product/<productid>/delete', methods=['GET','POST'])
+@login_required
+def delete_product(productid):
+    user = g.user._get_current_object()
+    product = models.Product.select().where(models.Product.id == productid).get()
+    if (productid != None): 
+        # add admin user field/logic to require admin status before delete
+        delete_product = product
+        delete_product.delete_instance(recursive=True, delete_nullable=False)
+        return redirect(url_for('product'))
+    return render_template('product.html')
+
+# Chart.js APIs
+@app.route('/api/accounts', methods=['GET'])
+def get_accounts():
+    accounts = models.Account.select()
+    return accounts.jsonify()
 
 # User CRUD
 @app.route('/profile', methods=['GET','POST'])

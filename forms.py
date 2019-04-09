@@ -82,11 +82,11 @@ class OpportunityForm(Form):
     account = SelectField('Account')
     name = StringField('Name')
     owner = SelectField('Owner')
-    opportunity_type = SelectField('Type', choices=[('new','New'),('upgrade','Upgrade'),('renewal','Renewal')])
+    opportunity_type = SelectField('Type', choices=[('New Business','New Business'),('Upgrade','Upgrade'),('Renewal','Renewal')])
     primary_contact = SelectField('Primary Contact')
     mrr = DecimalField('MRR')
     arr = DecimalField('ARR')
-    stage = SelectField('Stage', choices=[('qualifying','Qualifying'),('demo','Demo'),('pricing','Pricing'),('won','Closed Won'),('lost','Lost')])
+    stage = SelectField('Stage', choices=[('Qualifying','Qualifying'),('Demo','Demo'),('Pricing','Pricing'),('Closed Won','Closed Won'),('Lost','Lost')])
 
 class SubscriptionForm(Form):
     account = SelectField('Account')

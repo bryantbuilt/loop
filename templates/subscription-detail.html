@@ -1,0 +1,25 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <div class='container columns'>
+        <div class='column'>
+            <p>Account: {{subscription.account.name}}</p>
+            <p>Product: {{subscription.product.name}}</p>
+            <p>List Price: {{subscription.list_price}}</p>
+            <p>Discount: {{subscription.discount}}</p>
+            <p>Sale Price: {{subscription.sale_price}}</p>
+            <p>MRR: {{subscription.mrr}}</p>
+        </div>
+        <div class='column'>
+            <p>Opportunity: {{subscription.opportunity.name}}</p>
+            <p>Start Date: {{subscription.sub_start_date}}</p>
+            <p>End Date: {{subscription.sub_end_date}}</p>
+            <p>ARR: {{subscription.arr}}</p>
+            <p>Created By: {{subscription.created_by.fullname}}</p>
+        </div>
+    </div>
+    {% if user.id == subscription.created_by.id %}
+    <a role='button' class='button' href="{{url_for('edit_subscription',subscriptionid=subscription.id)}}">Edit</a>
+    <a role='button' class='button' href="{{url_for('delete_subscription',subscriptionid=subscription.id)}}">Delete</a>
+    {% endif %}
+{% endblock %}

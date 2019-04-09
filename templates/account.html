@@ -3,11 +3,10 @@
 {% from 'macros.html' import render_account %}
 
 {% block content %}
-<div class='container'>
-    <div class='level'>
-        <div class="level-item"><p>Graph 1</p></div>
-        <div class="level-item"><p>Graph 2</p></div>
-        <div class="level-item"><p>Graph 3</p></div>
+<div>
+    <div class='columns'>
+        <div class="column is-half box"><canvas id='graph-1'></canvas></div>
+        <div class="column is-half box"><canvas id='graph-2'></canvas></div>
     </div>
     <div class='level'>
             <div class="level-right">
@@ -39,4 +38,80 @@
         </tbody>
     </table>
 </div>
+
+<script>
+$(document).ready(function() {
+    var graph1 = $('#graph-1');
+    var graph1Chart = new Chart(graph1,{
+        type: 'bar',
+        data: {
+            labels : [{% for account in accounts %}
+                        "{{account.name}}",
+                        {% endfor %}],
+            datasets : [{
+                fillColor: "rgba(151,187,205,0.2)",
+                strokeColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(151,187,205,1)",
+                label: 'Monthly Revenue',
+                data : [
+                    {% for account in accounts %}
+                        "{{account.mrr}}",
+                    {% endfor %}
+                    ]
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            title: {
+                display: true,
+                text: 'Top Accounts',
+                fontSize: 18,
+                fontColor: 'black'
+            }
+        }
+    });
+
+    var graph2 = $('#graph-2');
+    var graph2Chart = new Chart(graph2,{
+        type: 'bar',
+        data: {
+            labels : [{% for account in accounts %}
+                        "{{account.name}}",
+                        {% endfor %}],
+            datasets : [{
+                fillColor: "rgba(151,187,205,0.2)",
+                strokeColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(151,187,205,1)",
+                label: 'Monthly Revenue',
+                data : [
+                    {% for account in accounts %}
+                        "{{account.mrr}}",
+                    {% endfor %}
+                    ]
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            title: {
+                display: true,
+                text: 'Top Accounts',
+                fontSize: 18,
+                fontColor: 'black'
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

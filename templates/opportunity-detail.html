@@ -4,12 +4,12 @@
     <div class='container columns'>
         <div class='column'>
             <p>Name: {{opportunity.name}}</p>
-            <p>Account: {{opportunity.account.name}}</p>
+            <p>Account: {% if opportunity.account %}{{opportunity.account.name}}{% endif %}</p>
             <p>Type: {{opportunity.opportunity_type}}</p>
             <p>Primary Contact: {% if opportunity.primary_contact %}{{opportunity.primary_contact.first_name + ' ' + opportunity.primary_contact.last_name}}{% endif %}</p>
         </div>
         <div class='column'>
-            <p>Owner: {{opportunity.owner.fullname}}</p>
+            <p>Owner: {% if opportunity.owner %}{{opportunity.owner.fullname}}{% endif %}</p>
             <p>MRR: {{opportunity.mrr}}</p>
             <p>ARR: {{opportunity.arr}}</p>
             <p>Stage: {{opportunity.stage}}</p>

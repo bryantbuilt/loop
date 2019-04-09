@@ -3,6 +3,13 @@
 {% from 'macros.html' import render_subscription %} 
 
 {% block content %}
+<div class='level'>
+        <div class="level-right">
+            <div class="level-item">
+                <a class='button' href="{{url_for('create_subscription')}}">New Subscription</a>
+            </div>
+        </div>
+</div>
 <table class="table is-fullwidth is-hoverable">
     <thead>
         <tr>
