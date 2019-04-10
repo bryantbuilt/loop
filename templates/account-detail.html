@@ -1,7 +1,9 @@
 {% extends 'index.html' %}
 
+{% from 'macros.html' import render_opportunity %}
+
 {% block content %}
-    <div class='container columns'>
+    <div class='columns box'>
         <div class='column'>
             <p>Account Name: {{account.name}}</p>
             <p>Account Type: {{account.account_type}}</p>
@@ -17,9 +19,32 @@
             <p>ARR: {{account.arr}}</p>
             <p>Created By: {{account.created_by.fullname}}</p>
         </div>
-    </div>
     {% if user.id == account.owner.id %}
     <a role='button' class='button' href="{{url_for('edit_account',accountid=account.id)}}">Edit</a>
     <a role='button' class='button' href="{{url_for('delete_account',accountid=account.id)}}">Delete</a>
+    </div>
     {% endif %}
+    <div class='level'>
+        <p class='title level-item'>Related Opportunities</p>
+    </div>
+    <table class="table is-fullwidth is-hoverable">
+            <thead>
+                <tr>
+                    <th>Account Name</th>
+                    <th>Owner</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Primary Contact</th>
+                    <th>MRR</th>
+                    <th>ARR</th>
+                    <th>Stage</th>
+                    <th>Created By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for opportunity in opportunities %}
+                    {{ render_opportunity(opportunity) }}
+                {% endfor %}
+            </tbody>
+    </table>
 {% endblock %}

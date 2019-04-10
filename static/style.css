@@ -1,3 +1,7 @@
 .core-title {
     margin-top: 10px;
 }
+
+canvas {
+    height: 100%;
+}

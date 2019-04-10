@@ -4,9 +4,9 @@
 
 {% block content %}
 <div>
-    <div class='columns'>
-        <div class="column is-half box"><canvas id='graph-1'></canvas></div>
-        <div class="column is-half box"><canvas id='graph-2'></canvas></div>
+    <div class='tile is-parent'>
+        <div class="tile is-child box"><canvas id='graph-1'></canvas></div>
+        <div class="tile is-child box"><canvas id='graph-2'></canvas></div>
     </div>
     <div class='level'>
             <div class="level-right">
@@ -49,9 +49,6 @@ $(document).ready(function() {
                         "{{account.name}}",
                         {% endfor %}],
             datasets : [{
-                fillColor: "rgba(151,187,205,0.2)",
-                strokeColor: "rgba(151,187,205,1)",
-                pointColor: "rgba(151,187,205,1)",
                 label: 'Monthly Revenue',
                 data : [
                     {% for account in accounts %}
@@ -76,22 +73,18 @@ $(document).ready(function() {
             }
         }
     });
-
     var graph2 = $('#graph-2');
     var graph2Chart = new Chart(graph2,{
         type: 'bar',
         data: {
-            labels : [{% for account in accounts %}
-                        "{{account.name}}",
+            labels : [{% for acct_w_opp in acct_w_opps %}
+                        "{{acct_w_opp.name}}",
                         {% endfor %}],
             datasets : [{
-                fillColor: "rgba(151,187,205,0.2)",
-                strokeColor: "rgba(151,187,205,1)",
-                pointColor: "rgba(151,187,205,1)",
-                label: 'Monthly Revenue',
+                label: 'Open Opportunities',
                 data : [
-                    {% for account in accounts %}
-                        "{{account.mrr}}",
+                    {% for acct_w_opp in acct_w_opps %}
+                        "{{acct_w_opp.open_opps}}",
                     {% endfor %}
                     ]
             }]

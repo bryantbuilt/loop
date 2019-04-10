@@ -2,7 +2,7 @@ from flask import Flask, g
 from flask import render_template, flash, redirect, url_for, request, jsonify, Markup
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_bcrypt import check_password_hash
-from peewee import fn
+from peewee import fn, JOIN
 
 import models
 import forms
@@ -45,23 +45,6 @@ def after_request(response):
 @app.route('/')
 def index():
     return render_template('index.html')
-
-labels = [
-    'JAN', 'FEB', 'MAR', 'APR',
-    'MAY', 'JUN', 'JUL', 'AUG',
-    'SEP', 'OCT', 'NOV', 'DEC'
-]
-
-values = [
-    967.67, 1190.89, 1079.75, 1349.19,
-    2328.91, 2504.28, 2873.83, 4764.87,
-    4349.29, 6458.30, 9907, 16297
-]
-
-colors = [
-    "#F7464A", "#46BFBD", "#FDB45C", "#FEDCBA",
-    "#ABCDEF", "#DDDDDD", "#ABCABC", "#4169E1",
-    "#C71585", "#FF4500", "#FEDCBA", "#46BFBD"]
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
@@ -114,12 +97,13 @@ def logout():
 def account(accountid=None):
     accounts = models.Account.select()
     title = 'Accounts'
-    bar_labels=labels
-    bar_values=values
+    acct_w_opps = models.Account.select(models.Account.id, models.Account.name, fn.COUNT(models.Opportunity.id).alias('open_opps')).join(models.Opportunity, JOIN.LEFT_OUTER, on=((models.Account.id == models.Opportunity.account_id) and (models.Opportunity.stage != 'Closed Won') and (models.Opportunity.stage != 'Lost'))).group_by(models.Account.id, models.Account.name)
     if accountid != None:
+        title = 'Account Details'
         account = models.Account.select().where(accountid == models.Account.id).get()
-        return render_template('account-detail.html', account=account, user=g.user._get_current_object())
-    return render_template('account.html', accounts=accounts, title=title)
+        opportunities = models.Opportunity.select().where(accountid == models.Opportunity.account_id)
+        return render_template('account-detail.html', account=account, user=g.user._get_current_object(), opportunities=opportunities, title=title)
+    return render_template('account.html', accounts=accounts, title=title, acct_w_opps=acct_w_opps)
 
 @app.route('/account/create', methods=['GET','POST'])
 @login_required
@@ -451,12 +435,6 @@ def delete_product(productid):
         delete_product.delete_instance(recursive=True, delete_nullable=False)
         return redirect(url_for('product'))
     return render_template('product.html')
-
-# Chart.js APIs
-@app.route('/api/accounts', methods=['GET'])
-def get_accounts():
-    accounts = models.Account.select()
-    return accounts.jsonify()
 
 # User CRUD
 @app.route('/profile', methods=['GET','POST'])
