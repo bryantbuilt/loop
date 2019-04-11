@@ -363,6 +363,7 @@ def create_subscription():
             arr = form.product_price.data * form.quantity.data * 12,
             created_by = g.user._get_current_object()
         )
+        subscriptionid = models.Subscription.select(models.Subscription.id).order_by(models.Subscription.id.desc()).get()
         sub_account_id = models.Subscription.select(models.Subscription.account_id).where(subscriptionid == models.Subscription.id)
         new_account_mrr = models.Subscription.select(fn.SUM(models.Subscription.mrr)).where(models.Subscription.account_id == sub_account_id)
         new_account_arr = models.Subscription.select(fn.SUM(models.Subscription.arr)).where(models.Subscription.account_id == sub_account_id)
@@ -383,6 +384,7 @@ def edit_subscription(subscriptionid):
     form.product.choices = [(str(product.id), product.name) for product in models.Product.select()]
     record = models.Subscription.select().where(subscriptionid == models.Subscription.id).dicts().get()
     title = 'Edit Subscription'
+    products = models.Product.select()
     if form.validate_on_submit():
         flash("Subscription update",'success')
         edit_subscription = models.Subscription.update(
@@ -406,7 +408,7 @@ def edit_subscription(subscriptionid):
         new_opp_arr = models.Subscription.select(fn.SUM(models.Subscription.arr)).where(models.Subscription.opportunity_id == sub_opp_id)
         models.Opportunity.update(mrr = new_opp_mrr, arr = new_opp_arr).where(models.Opportunity.id == sub_opp_id).execute()
         return redirect('subscription')
-    return render_template('edit.html', form=form, record=record, title=title)
+    return render_template('edit.html', form=form, record=record, title=title, products=products)
 
 @app.route('/subscription/<subscriptionid>/delete', methods=['GET','POST'])
 @login_required

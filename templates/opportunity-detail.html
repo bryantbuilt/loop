@@ -1,23 +1,97 @@
 {% extends 'index.html' %}
 
 {% block content %}
-    <div class='container columns'>
-        <div class='column'>
-            <p>Name: {{opportunity.name}}</p>
-            <p>Account: {% if opportunity.account %}{{opportunity.account.name}}{% endif %}</p>
-            <p>Type: {{opportunity.opportunity_type}}</p>
-            <p>Primary Contact: {% if opportunity.primary_contact %}{{opportunity.primary_contact.first_name + ' ' + opportunity.primary_contact.last_name}}{% endif %}</p>
+<div class='tile is-parent'>
+    <div class="tile is-child box">
+        <div class="columns">
+            <div class='column'>
+                <p>Name: {{opportunity.name}}</p>
+                <p>Account: {% if opportunity.account %}{{opportunity.account.name}}{% endif %}</p>
+                <p>Type: {{opportunity.opportunity_type}}</p>
+                <p>Primary Contact: {% if opportunity.primary_contact %}{{opportunity.primary_contact.first_name + ' ' + opportunity.primary_contact.last_name}}{% endif %}</p>
+            </div>
+            <div class='column'>
+                <p>Owner: {% if opportunity.owner %}{{opportunity.owner.fullname}}{% endif %}</p>
+                <p>MRR: {{opportunity.mrr}}</p>
+                <p>ARR: {{opportunity.arr}}</p>
+                <p>Stage: {{opportunity.stage}}</p>
+                <p>Created By: {{opportunity.created_by.fullname}}</p>
+            </div>
         </div>
-        <div class='column'>
-            <p>Owner: {% if opportunity.owner %}{{opportunity.owner.fullname}}{% endif %}</p>
-            <p>MRR: {{opportunity.mrr}}</p>
-            <p>ARR: {{opportunity.arr}}</p>
-            <p>Stage: {{opportunity.stage}}</p>
-            <p>Created By: {{opportunity.created_by.fullname}}</p>
+        {% if user.id == opportunity.owner.id %}
+        <div class='field is-grouped is-grouped-centered'>
+            <div class="control">
+                <a role='button' class='button is-link' href="{{url_for('edit_opportunity',opportunityid=opportunity.id)}}">Edit</a>
+            </div>
+            <div class="control">
+                <a role='button' class='button is-danger' href="{{url_for('delete_opportunity',opportunityid=opportunity.id)}}">Delete</a>
+            </div>
         </div>
+        {% endif %}
     </div>
-    {% if user.id == opportunity.owner.id %}
-    <a role='button' class='button' href="{{url_for('edit_opportunity',opportunityid=opportunity.id)}}">Edit</a>
-    <a role='button' class='button' href="{{url_for('delete_opportunity',opportunityid=opportunity.id)}}">Delete</a>
-    {% endif %}
+    <div class="tile is-child box">
+        <canvas id='graph-1'></canvas>
+    </div>
+</div>
+<div class='level'>
+    <p class='title level-item'>Related Subscriptions</p>
+</div>
+<table class="table is-fullwidth is-hoverable">
+        <thead>
+            <tr>
+                <td><a class='button is-primary' href="{{url_for('create_subscription')}}">New</a></td>
+                <th>Account</th>
+                <th>Opportunity</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>MRR</th>
+                <th>ARR</th>
+                <th>Created By</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for subscription in subscriptions %}
+            {{ render_subscription(subscription) }}
+            {% endfor %}
+        </tbody>
+</table>
+<script>
+    $(document).ready(function() {
+        var graph1 = $('#graph-1');
+        var graph1Chart = new Chart(graph1,{
+            type: 'line',
+            data: {
+                labels : [{% for opportunity in opportunities %}
+                            "{{opportunity.close_date}}",
+                            {% endfor %}],
+                datasets : [{
+                    label: 'Monthly Revenue',
+                    data : [
+                        {% for opportunity in opportunities %}
+                            "{{opportunity.mrr}}",
+                        {% endfor %}
+                        ]
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                },
+                title: {
+                    display: true,
+                    text: 'Top Accounts',
+                    fontSize: 18,
+                    fontColor: 'black'
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}

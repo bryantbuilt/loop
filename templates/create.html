@@ -32,4 +32,40 @@
         </div>
     </div>
 </form>
+<script>
+    $(document).ready(function(){
+        $('#product').prepend(
+            `<option selected>Select Product</option>`
+        );
+
+        {% if products %}
+            $('#product').change(function(){
+                let prodChoice = $(this).val();
+                {% for product in products %}
+                    if ({{product.id}} == prodChoice) {
+                        $('#product_price').val('{{product.price}}');
+                    };
+                {% endfor %}
+            });
+        {% endif %}
+
+        $('#account').prepend(
+            `<option selected>Select Account</option>`
+        );
+
+        $('#opportunity').prepend(
+            `<option selected>Select Opportunity</option>`
+        );
+
+        $('#owner').prepend(
+            `<option selected>Select Owner</option>`
+        );
+
+        $('#primary_contact').prepend(
+            `<option selected>Select Primary Contact</option>`
+        );
+
+    });
+
+</script>
 {% endblock %}

@@ -63,18 +63,23 @@
 </table>
 <script>
     $(document).ready(function() {
-        var graph1 = $('#graph-1');
-        var graph1Chart = new Chart(graph1,{
+        let graph1 = $('#graph-1');
+        let stageName = ['Closed Won', 'Pricing', 'Demo', 'Qualifying', 'Lost'];
+        let graph1Chart = new Chart(graph1,{
             type: 'line',
             data: {
-                labels : [{% for account in accounts %}
-                            "{{account.name}}",
+                labels : [{% for opportunity in opportunities %}
+                            moment("{{opportunity.close_date}}").format("YYYY-MM-DD"),
                             {% endfor %}],
                 datasets : [{
+                    backgroundColor: '#e5374860',
+                    borderColor: '#e53748',
+                    hoverBorderColor: 'black',
                     label: 'Monthly Revenue',
+                    yAxisID: 'mrr-left',
                     data : [
-                        {% for account in accounts %}
-                            "{{account.mrr}}",
+                        {% for opportunity in opportunities %}
+                            "{{opportunity.mrr}}",
                         {% endfor %}
                         ]
                 }]
@@ -82,14 +87,25 @@
             options: {
                 scales: {
                     yAxes: [{
+                        id: 'mrr-left',
+                        position: 'left',
                         ticks: {
-                            beginAtZero: true
+                            beginAtZero: true,
                         }
+                    }],
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            displayFormats: {
+                                'day': 'll'
+                            }
+                        }
+
                     }]
                 },
                 title: {
                     display: true,
-                    text: 'Top Accounts',
+                    text: 'Incoming Deals',
                     fontSize: 18,
                     fontColor: 'black'
                 }
