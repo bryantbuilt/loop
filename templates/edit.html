@@ -34,16 +34,36 @@
 </form>
 <script>
     $(document).ready(function(){
-        function findSelection() {
+        function prevSelections() {
             let acctSelected = $('#account').attr('value');
-            let acctOption = $('#account').children(`[value=${acctSelected}]`); 
+            let acctOption = $('#account').children(`[value='${acctSelected}']`); 
             acctOption.attr('selected',true);
             
             let oppSelected = $('#opportunity').attr('value');
-            let oppOption = $('#opportunity').children(`[value=${oppSelected}]`); 
+            let oppOption = $('#opportunity').children(`[value='${oppSelected}']`); 
             oppOption.attr('selected',true);
+    
+            let contactSelected = $('#primary_contact').attr('value');
+            let contactOption = $('#primary_contact').children(`[value='${contactSelected}']`);
+            contactOption.attr('selected',true);
+    
+            let stageSelected = $('#stage').attr('value');
+            let stageOption = $('#stage').children(`[value='${stageSelected}']`);
+            stageOption.attr('selected',true);
+    
+            let oppTypeSelected = $('#opportunity_type').attr('value');
+            let oppTypeOption = $('#opportunity_type').children(`[value='${oppTypeSelected}']`);
+            oppTypeOption.attr('selected',true);
+    
+            let acctTypeSelected = $('#account_type').attr('value');
+            let acctTypeOption = $('#account_type').children(`[value='${acctTypeSelected}']`);
+            acctTypeOption.attr('selected',true);
+    
+            let ownerSelected = $('#owner').attr('value');
+            let ownerOption = $('#owner').children(`[value='${ownerSelected}']`);
+            ownerOption.attr('selected',true);
         };
-        findSelection();
+        prevSelections();
     });
 </script>
 {% endblock %}

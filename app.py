@@ -281,8 +281,8 @@ def create_opportunity():
             owner = form.owner.data,
             opportunity_type = form.opportunity_type.data,
             primary_contact = form.primary_contact.data,
-            mrr = form.mrr.data,
-            arr = form.arr.data,
+            mrr = 0,
+            arr = 0,
             stage = form.stage.data,
             close_date = form.close_date.data
         )
@@ -306,8 +306,6 @@ def edit_opportunity(opportunityid):
             owner = form.owner.data,
             opportunity_type = form.opportunity_type.data,
             primary_contact = form.primary_contact.data,
-            mrr = form.mrr.data,
-            arr = form.arr.data,
             stage = form.stage.data,
             close_date = form.close_date.data
         ).where(opportunityid == models.Opportunity.id)
