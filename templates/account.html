@@ -8,16 +8,10 @@
         <div class="tile is-child box"><canvas id='graph-1'></canvas></div>
         <div class="tile is-child box"><canvas id='graph-2'></canvas></div>
     </div>
-    <div class='level'>
-            <div class="level-right">
-                <div class="level-item">
-                    <a class='button' href="{{url_for('create_account')}}">New Account</a>
-                </div>
-            </div>
-    </div>
     <table class="table is-fullwidth is-hoverable">
         <thead>
             <tr>
+                <td><a class='button' href="{{url_for('create_account')}}">New</a></td>
                 <th>Name</th>
                 <th>Owner</th>
                 <th>Type</th>
@@ -93,13 +87,14 @@ $(document).ready(function() {
             scales: {
                 yAxes: [{
                     ticks: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        stepSize: 1
                     }
                 }]
             },
             title: {
                 display: true,
-                text: 'Top Accounts',
+                text: 'Active Accounts',
                 fontSize: 18,
                 fontColor: 'black'
             }

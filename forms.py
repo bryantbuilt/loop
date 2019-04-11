@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm as Form
-from wtforms import StringField, PasswordField, TextAreaField, DateField, DateTimeField, DecimalField, BooleanField, SelectField, SelectMultipleField,SubmitField,HiddenField
+from wtforms import StringField, IntegerField, PasswordField, TextAreaField, DateField, DateTimeField, DecimalField, BooleanField, SelectField, SelectMultipleField,SubmitField,HiddenField
 from wtforms.widgets import ListWidget, CheckboxInput
 from wtforms.validators import (DataRequired, Regexp, ValidationError, Email,
                                Length, EqualTo,Required)
@@ -56,15 +56,14 @@ class LoginForm(Form):
 class AccountForm(Form):
     name = StringField('Name')
     owner = SelectField('Owner')
-    account_type = SelectField('Type', choices=[('prospect','Prospect'),('customer','Customer')])
+    account_type = SelectField('Type', choices=[('Prospect','Prospect'),('Customer','Customer')])
     website = StringField('Website')
     street = StringField('Street')
     city = StringField('City')
     state = StringField('State')
     country = StringField('Country')
-    mrr = DecimalField('MRR')
-    arr = DecimalField('ARR')
-    # Need Owner and Created By
+    # mrr = DecimalField('MRR', default=0)
+    # arr = DecimalField('ARR', default=0)
 class ContactForm(Form):
     account = SelectField('Account')
     owner = SelectField('Owner')
@@ -84,21 +83,20 @@ class OpportunityForm(Form):
     owner = SelectField('Owner')
     opportunity_type = SelectField('Type', choices=[('New Business','New Business'),('Upgrade','Upgrade'),('Renewal','Renewal')])
     primary_contact = SelectField('Primary Contact')
-    mrr = DecimalField('MRR')
-    arr = DecimalField('ARR')
+    # mrr = DecimalField('MRR',default=0)
+    # arr = DecimalField('ARR',default=0)
     stage = SelectField('Stage', choices=[('Qualifying','Qualifying'),('Demo','Demo'),('Pricing','Pricing'),('Closed Won','Closed Won'),('Lost','Lost')])
-
+    close_date = DateField('Close Date')
 class SubscriptionForm(Form):
     account = SelectField('Account')
     opportunity = SelectField('Opportunity')
     product = SelectField('Product')
-    list_price = DecimalField('List Price')
-    discount = DecimalField('Discount Percentage')
-    sale_price = DecimalField('Sale Price')
+    product_price = DecimalField('Price')
+    quantity = IntegerField('Quantity')
     sub_start_date = DateField('Subscription Start Date')
     sub_end_date = DateField('Subscription End Date')
-    mrr = DecimalField('MRR')
-    arr = DecimalField('ARR')
+    # mrr = DecimalField('MRR',default=0)
+    # arr = DecimalField('ARR',default=0)
 class ProductForm(Form):
     name = StringField('Product Name')
-    price = DecimalField('List Price')
+    price = DecimalField('Price Per Unit')

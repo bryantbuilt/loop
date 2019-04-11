@@ -97,12 +97,13 @@ def logout():
 def account(accountid=None):
     accounts = models.Account.select()
     title = 'Accounts'
-    acct_w_opps = models.Account.select(models.Account.id, models.Account.name, fn.COUNT(models.Opportunity.id).alias('open_opps')).join(models.Opportunity, JOIN.LEFT_OUTER, on=((models.Account.id == models.Opportunity.account_id) and (models.Opportunity.stage != 'Closed Won') and (models.Opportunity.stage != 'Lost'))).group_by(models.Account.id, models.Account.name)
+    acct_w_opps = models.Account.select(models.Account.id, models.Account.name, fn.COUNT(models.Opportunity.id).alias('open_opps')).join(models.Opportunity, JOIN.LEFT_OUTER, on=((models.Account.id == models.Opportunity.account_id) & (models.Opportunity.stage != 'Closed Won') & (models.Opportunity.stage != 'Lost'))).group_by(models.Account.id, models.Account.name)
     if accountid != None:
         title = 'Account Details'
         account = models.Account.select().where(accountid == models.Account.id).get()
         opportunities = models.Opportunity.select().where(accountid == models.Opportunity.account_id)
         return render_template('account-detail.html', account=account, user=g.user._get_current_object(), opportunities=opportunities, title=title)
+    print(acct_w_opps)
     return render_template('account.html', accounts=accounts, title=title, acct_w_opps=acct_w_opps)
 
 @app.route('/account/create', methods=['GET','POST'])
@@ -110,6 +111,7 @@ def account(accountid=None):
 def create_account(accountid=None):
     form = forms.AccountForm()
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
+    title = 'Create Account'
     if form.validate_on_submit():
         flash("Account created!", 'success')
         models.Account.create_account(
@@ -122,11 +124,11 @@ def create_account(accountid=None):
             state = form.state.data,
             country = form.country.data,
             website = form.website.data,
-            mrr = form.mrr.data,
-            arr = form.arr.data
+            mrr = 0,
+            arr = 0
         )
         return redirect ('account')
-    return render_template('create.html', form=form)
+    return render_template('create.html', form=form, title=title)
 
 @app.route('/account/<accountid>/edit', methods=['GET','POST'])
 @login_required
@@ -134,6 +136,7 @@ def edit_account(accountid):
     form = forms.AccountForm()
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
     record = models.Account.select().where(accountid == models.Account.id).dicts().get()
+    title = 'Edit Account'
     if form.validate_on_submit():
         flash("Account updated!", 'success')
         edited_account = models.Account.update(
@@ -150,7 +153,7 @@ def edit_account(accountid):
         ).where(accountid == models.Account.id)
         edited_account.execute()
         return redirect(url_for('account', accountid=accountid))
-    return render_template('edit.html', form=form, record=record)
+    return render_template('edit.html', form=form, record=record, title=title)
 
 @app.route('/account/<accountid>/delete', methods=['GET','POST'])
 @login_required
@@ -172,10 +175,11 @@ def delete_account(accountid):
 @app.route('/contact/<contactid>/r', methods=['GET'])
 def contact(contactid=None):
     contacts = models.Contact.select()
+    title = 'Contacts'
     if contactid != None:
         contact = models.Contact.select().where(models.Contact.id == contactid).get()
         return render_template('contact-detail.html', contact=contact, user=g.user._get_current_object())
-    return render_template('contact.html', contacts=contacts)
+    return render_template('contact.html', contacts=contacts, title=title)
 
 
 @app.route('/contact/create', methods=['GET','POST'])
@@ -184,6 +188,7 @@ def create_contact():
     form = forms.ContactForm()
     form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
+    title = 'Create Contact'
     if form.validate_on_submit():
         flash("Contact created!", 'success')
         models.Contact.create_contact(
@@ -202,7 +207,7 @@ def create_contact():
             phone = form.phone.data
         )
         return redirect ('contact')
-    return render_template('create.html', form=form)
+    return render_template('create.html', form=form, title=title)
 
 @app.route('/contact/<contactid>/edit', methods=['GET','POST'])
 @login_required
@@ -211,6 +216,7 @@ def edit_contact(contactid):
     form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
     record = models.Contact.select().where(contactid == models.Contact.id).dicts().get()
+    title = 'Edit Contact'
     if form.validate_on_submit():
         flash("Contact edited", 'success')
         edited_contact = models.Contact.update(
@@ -229,7 +235,7 @@ def edit_contact(contactid):
         )
         edited_contact.execute()
         return redirect(url_for('contact'))
-    return render_template('edit.html', form=form, record=record)
+    return render_template('edit.html', form=form, record=record, title=title)
 
 @app.route('/contact/<contactid>/delete', methods=['GET','POST'])
 @login_required
@@ -251,10 +257,12 @@ def delete_contact(contactid):
 @app.route('/opportunity/<opportunityid>/r', methods=['GET'])
 def opportunity(opportunityid=None):
     opportunities = models.Opportunity.select()
+    title = 'Opportunities'
     if opportunityid != None:
         opportunity = models.Opportunity.select().where(models.Opportunity.id == opportunityid).get()
-        return render_template('opportunity-detail.html', opportunity=opportunity, user=g.user._get_current_object())
-    return render_template('opportunity.html', opportunities=opportunities)
+        title = 'Opportunity Details'
+        return render_template('opportunity-detail.html', opportunity=opportunity, user=g.user._get_current_object(), title=title)
+    return render_template('opportunity.html', opportunities=opportunities, title=title)
 
 @app.route('/opportunity/create', methods=['GET','POST'])
 @login_required
@@ -263,6 +271,7 @@ def create_opportunity():
     form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
     form.primary_contact.choices = [(str(contact.id), (contact.first_name + ' ' + contact.last_name)) for contact in models.Contact.select()]
+    title = 'Create Opportunity'
     if form.validate_on_submit():
         flash("Opportunity created", 'success')
         models.Opportunity.create_opportunity(
@@ -274,10 +283,11 @@ def create_opportunity():
             primary_contact = form.primary_contact.data,
             mrr = form.mrr.data,
             arr = form.arr.data,
-            stage = form.stage.data
+            stage = form.stage.data,
+            close_date = form.close_date.data
         )
         return redirect('opportunity')
-    return render_template('create.html', form=form)
+    return render_template('create.html', form=form, title=title)
 
 @app.route('/opportunity/<opportunityid>/edit', methods=['GET','POST'])
 @login_required
@@ -287,6 +297,7 @@ def edit_opportunity(opportunityid):
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
     form.primary_contact.choices = [(str(contact.id), (contact.first_name + ' ' + contact.last_name)) for contact in models.Contact.select()]
     record = models.Opportunity.select().where(opportunityid == models.Opportunity.id).dicts().get()
+    title = 'Edit Opportunity'
     if form.validate_on_submit():
         flash("Opportunity updated", 'success')
         edited_opp = models.Opportunity.update(
@@ -297,11 +308,12 @@ def edit_opportunity(opportunityid):
             primary_contact = form.primary_contact.data,
             mrr = form.mrr.data,
             arr = form.arr.data,
-            stage = form.stage.data
+            stage = form.stage.data,
+            close_date = form.close_date.data
         ).where(opportunityid == models.Opportunity.id)
         edited_opp.execute()
         return redirect('opportunity')
-    return render_template('edit.html', form=form, record=record)
+    return render_template('edit.html', form=form, record=record, title=title)
 
 @app.route('/opportunity/<opportunityid>/delete', methods=['GET','POST'])
 @login_required
@@ -323,10 +335,12 @@ def delete_opportunity(opportunityid):
 @app.route('/subscription/<subscriptionid>/r', methods=['GET'])
 def subscription(subscriptionid=None):
     subscriptions = models.Subscription.select()
+    title = 'Subscriptions'
     if subscriptionid != None:
         subscription = models.Subscription.select().where(models.Subscription.id == subscriptionid).get()
-        return render_template('subscription-detail.html', subscription=subscription, user=g.user._get_current_object())
-    return render_template('subscription.html', subscriptions=subscriptions)
+        title = 'Subscription Details'
+        return render_template('subscription-detail.html', subscription=subscription, user=g.user._get_current_object(), title=title)
+    return render_template('subscription.html', subscriptions=subscriptions, title=title)
 
 @app.route('/subscription/create', methods=['GET','POST'])
 @login_required
@@ -335,22 +349,32 @@ def create_subscription():
     form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
     form.opportunity.choices = [(str(opportunity.id), opportunity.name) for opportunity in models.Opportunity.select()]
     form.product.choices = [(str(product.id), product.name) for product in models.Product.select()]
+    products = models.Product.select()
+    title = 'Create Subscription'
     if form.validate_on_submit():
         flash("Subscription created",'success')
         models.Subscription.create_subscription(
             account = form.account.data,
             opportunity = form.opportunity.data,
             product = form.product.data,
-            list_price = form.list_price.data,
-            discount = form.discount.data,
-            sale_price = form.sale_price.data,
+            product_price = form.product_price.data,
+            quantity = form.quantity.data,
             sub_start_date = form.sub_start_date.data,
             sub_end_date = form.sub_end_date.data,
-            mrr = form.mrr.data,
-            arr = form.arr.data,
+            mrr = form.product_price.data * form.quantity.data,
+            arr = form.product_price.data * form.quantity.data * 12,
             created_by = g.user._get_current_object()
         )
-    return render_template('create.html', form=form)
+        sub_account_id = models.Subscription.select(models.Subscription.account_id).where(subscriptionid == models.Subscription.id)
+        new_account_mrr = models.Subscription.select(fn.SUM(models.Subscription.mrr)).where(models.Subscription.account_id == sub_account_id)
+        new_account_arr = models.Subscription.select(fn.SUM(models.Subscription.arr)).where(models.Subscription.account_id == sub_account_id)
+        models.Account.update(mrr = new_account_mrr,arr = new_account_arr).where(models.Account.id == sub_account_id).execute()
+        sub_opp_id = models.Subscription.select(models.Subscription.opportunity_id).where(subscriptionid == models.Subscription.id)
+        new_opp_mrr = models.Subscription.select(fn.SUM(models.Subscription.mrr)).where(models.Subscription.opportunity_id == sub_opp_id)
+        new_opp_arr = models.Subscription.select(fn.SUM(models.Subscription.arr)).where(models.Subscription.opportunity_id == sub_opp_id)
+        models.Opportunity.update(mrr = new_account_mrr, arr = new_account_arr).where(models.Opportunity.id == sub_opp_id).execute()
+        return redirect('subscription')
+    return render_template('create.html', form=form, products=products, title=title)
 
 @app.route('/subscription/<subscriptionid>/edit', methods=['GET','POST'])
 @login_required
@@ -360,22 +384,31 @@ def edit_subscription(subscriptionid):
     form.opportunity.choices = [(str(opportunity.id), opportunity.name) for opportunity in models.Opportunity.select()]
     form.product.choices = [(str(product.id), product.name) for product in models.Product.select()]
     record = models.Subscription.select().where(subscriptionid == models.Subscription.id).dicts().get()
+    title = 'Edit Subscription'
     if form.validate_on_submit():
         flash("Subscription update",'success')
         edit_subscription = models.Subscription.update(
             account = form.account.data,
             opportunity = form.opportunity.data,
             product = form.product.data,
-            list_price = form.list_price.data,
-            discount = form.discount.data,
-            sale_price = form.sale_price.data,
+            product_price = form.product_price.data,
+            quantity = form.quantity.data,
             sub_start_date = form.sub_start_date.data,
             sub_end_date = form.sub_end_date.data,
-            mrr = form.mrr.data,
-            arr = form.arr.data,
+            mrr = form.product_price.data * form.quantity.data,
+            arr = form.product_price.data * form.quantity.data * 12,
         ).where(subscriptionid == models.Subscription.id)
         edit_subscription.execute()
-    return render_template('edit.html', form=form, record=record)
+        sub_account_id = models.Subscription.select(models.Subscription.account_id).where(subscriptionid == models.Subscription.id)
+        new_account_mrr = models.Subscription.select(fn.SUM(models.Subscription.mrr)).where(models.Subscription.account_id == sub_account_id)
+        new_account_arr = models.Subscription.select(fn.SUM(models.Subscription.arr)).where(models.Subscription.account_id == sub_account_id)
+        models.Account.update(mrr = new_account_mrr,arr = new_account_arr).where(models.Account.id == sub_account_id).execute()
+        sub_opp_id = models.Subscription.select(models.Subscription.opportunity_id).where(subscriptionid == models.Subscription.id)
+        new_opp_mrr = models.Subscription.select(fn.SUM(models.Subscription.mrr)).where(models.Subscription.opportunity_id == sub_opp_id)
+        new_opp_arr = models.Subscription.select(fn.SUM(models.Subscription.arr)).where(models.Subscription.opportunity_id == sub_opp_id)
+        models.Opportunity.update(mrr = new_account_mrr, arr = new_account_arr).where(models.Opportunity.id == sub_opp_id).execute()
+        return redirect('subscription')
+    return render_template('edit.html', form=form, record=record, title=title)
 
 @app.route('/subscription/<subscriptionid>/delete', methods=['GET','POST'])
 @login_required
@@ -400,6 +433,7 @@ def delete_subscription(subscriptionid):
 def product(productid=None):
     form = forms.ProductForm()
     products = models.Product.select()
+    title = 'Products'
     if form.validate_on_submit():
         flash('Product Created','success')
         models.Product.create_product(
@@ -407,13 +441,14 @@ def product(productid=None):
             price = form.price.data
         )
         return redirect('product')
-    return render_template('product.html', form=form, products=products)
+    return render_template('product.html', form=form, products=products, title=title)
 
 @app.route('/product/<productid>/edit', methods=['GET','POST'])
 @login_required
 def edit_product(productid):
     form = forms.ProductForm()
     record = models.Product.select().where(models.Product.id == productid).dicts().get()
+    title = 'Edit Product'
     if form.validate_on_submit():
         flash('Product updated','success')
         edit_product = models.Product.update(
@@ -422,7 +457,7 @@ def edit_product(productid):
         ).where(productid == models.Product.id)
         edit_product.execute()
         return redirect('product')
-    return render_template('edit.html', form=form, record=record)
+    return render_template('edit.html', form=form, record=record, title=title)
 
 @app.route('/product/<productid>/delete', methods=['GET','POST'])
 @login_required
@@ -440,7 +475,8 @@ def delete_product(productid):
 @app.route('/profile', methods=['GET','POST'])
 @login_required
 def profile():
-    return render_template('profile.html')
+    title = 'Profile'
+    return render_template('profile.html', title=title)
 
 if __name__ == '__main__':
     models.initialize()

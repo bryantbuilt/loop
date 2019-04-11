@@ -103,12 +103,13 @@ class Opportunity(Model):
     mrr = DecimalField()
     arr = DecimalField()
     stage = CharField()
+    close_date = DateField()
     created_by = ForeignKeyField(model=User, null=True, backref='creator')
     class Meta:
         database = DATABASE
     
     @classmethod
-    def create_opportunity(cls,account,name,created_by,owner,opportunity_type,primary_contact,mrr,arr,stage):
+    def create_opportunity(cls,account,name,created_by,owner,opportunity_type,primary_contact,mrr,arr,stage,close_date):
         cls.create(
             account = account,
             name = name,
@@ -118,39 +119,8 @@ class Opportunity(Model):
             primary_contact = primary_contact,
             mrr = mrr,
             arr = arr,
-            stage = stage)
-    
-class Subscription(Model):
-    account = ForeignKeyField(model=Account, null=True, backref='subscription')
-    opportunity = ForeignKeyField(model=Opportunity, null=True, backref='opportunity')
-    product = CharField()
-    list_price = DecimalField()
-    discount = DecimalField()
-    sale_price = DecimalField()
-    sub_start_date = DateField()
-    sub_end_date = DateField()
-    mrr = DecimalField()
-    arr = DecimalField()
-    created_by = ForeignKeyField(model=User, null=True, backref='creator')
-
-    class Meta:
-        database = DATABASE
-
-    @classmethod
-    def create_subscription(cls,account,opportunity,product,list_price,discount,sale_price,sub_start_date,sub_end_date,mrr,arr,created_by):
-        cls.create(
-            account = account,
-            opportunity = opportunity,
-            product = product,
-            list_price = list_price,
-            discount = discount,
-            sale_price = sale_price,
-            sub_start_date = sub_start_date,
-            sub_end_date = sub_end_date,
-            mrr = mrr,
-            arr = arr,
-            created_by = created_by
-        )
+            stage = stage,
+            close_date = close_date)
 
 class Product(Model):
     name = CharField()
@@ -165,8 +135,37 @@ class Product(Model):
             name = name,
             price = price
         )
+class Subscription(Model):
+    account = ForeignKeyField(model=Account, null=True, backref='subscription')
+    opportunity = ForeignKeyField(model=Opportunity, null=True, backref='subscription')
+    product = ForeignKeyField(model=Product, null=True, backref='subscription')
+    product_price = DecimalField(default=Product.price)
+    quantity = IntegerField(default=1)
+    sub_start_date = DateField()
+    sub_end_date = DateField()
+    mrr = DecimalField()
+    arr = DecimalField()
+    created_by = ForeignKeyField(model=User, null=True, backref='creator')
+
+    class Meta:
+        database = DATABASE
+
+    @classmethod
+    def create_subscription(cls,account,opportunity,product,product_price,quantity,sub_start_date,sub_end_date,mrr,arr,created_by):
+        cls.create(
+            account = account,
+            opportunity = opportunity,
+            product = product,
+            product_price = product_price,
+            qualtity = quantity,
+            sub_start_date = sub_start_date,
+            sub_end_date = sub_end_date,
+            mrr = mrr,
+            arr = arr,
+            created_by = created_by
+        )
 
 def initialize():
     DATABASE.connect()
-    DATABASE.create_tables([User,Account,Contact,Opportunity,Subscription,Product], safe=True)
+    DATABASE.create_tables([User,Account,Contact,Opportunity,Product,Subscription], safe=True)
     DATABASE.close()

@@ -32,4 +32,18 @@
         </div>
     </div>
 </form>
+<script>
+    $(document).ready(function(){
+        function findSelection() {
+            let acctSelected = $('#account').attr('value');
+            let acctOption = $('#account').children(`[value=${acctSelected}]`); 
+            acctOption.attr('selected',true);
+            
+            let oppSelected = $('#opportunity').attr('value');
+            let oppOption = $('#opportunity').children(`[value=${oppSelected}]`); 
+            oppOption.attr('selected',true);
+        };
+        findSelection();
+    });
+</script>
 {% endblock %}
