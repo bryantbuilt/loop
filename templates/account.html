@@ -11,7 +11,7 @@
     <table class="table is-fullwidth is-hoverable">
         <thead>
             <tr>
-                <td><a class='button' href="{{url_for('create_account')}}">New</a></td>
+                <td><a class='button is-primary' href="{{url_for('create_account')}}">New</a></td>
                 <th>Name</th>
                 <th>Owner</th>
                 <th>Type</th>
@@ -37,12 +37,16 @@
 $(document).ready(function() {
     var graph1 = $('#graph-1');
     var graph1Chart = new Chart(graph1,{
-        type: 'bar',
+        type: 'horizontalBar',
         data: {
             labels : [{% for account in accounts %}
                         "{{account.name}}",
                         {% endfor %}],
             datasets : [{
+                backgroundColor: '#63bfcc60',
+                borderColor: '#63bfcc',
+                hoverBorderColor: 'black',
+                borderWidth: 2,
                 label: 'Monthly Revenue',
                 data : [
                     {% for account in accounts %}
@@ -53,7 +57,7 @@ $(document).ready(function() {
         },
         options: {
             scales: {
-                yAxes: [{
+                xAxes: [{
                     ticks: {
                         beginAtZero: true
                     }
@@ -75,6 +79,10 @@ $(document).ready(function() {
                         "{{acct_w_opp.name}}",
                         {% endfor %}],
             datasets : [{
+                backgroundColor: '#399e1440',
+                borderColor: '#399e14',
+                hoverBorderColor: 'black',
+                borderWidth: 2,
                 label: 'Open Opportunities',
                 data : [
                     {% for acct_w_opp in acct_w_opps %}

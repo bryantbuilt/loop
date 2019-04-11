@@ -94,7 +94,7 @@
 
 {% macro render_account(account) %}
     <tr>
-        <td><a class='button' href="{{url_for('account', accountid=account.id)}}">View</a></td>
+        <td><a class='button is-info' href="{{url_for('account', accountid=account.id)}}">View</a></td>
         <td>{{account.name}}</td>
         <td>{% if account.owner %}{{account.owner.fullname}}{% endif %}</td>
         <td>{{account.account_type}}</td>
@@ -111,7 +111,7 @@
 
 {% macro render_contact(contact) %}
     <tr>
-        <td><a class='button' href="{{url_for('contact', contactid=contact.id)}}">View</a></td>
+        <td><a class='button is-info' href="{{url_for('contact', contactid=contact.id)}}">View</a></td>
         <td>{% if contact.account %}<a href="{{url_for('account', accountid=contact.account.id)}}">{{contact.account.name}}</a>{% endif %}</td>
         <td>{% if contact.owner %}{{contact.owner.fullname}}{% endif %}</td>
         <td>{{contact.first_name + ' ' + contact.last_name}}</td>
@@ -129,7 +129,7 @@
 
 {% macro render_opportunity(opportunity) %}
     <tr>
-        <td><a class='button' href="{{url_for('opportunity', opportunityid=opportunity.id)}}">View</a></td>
+        <td><a class='button is-info' href="{{url_for('opportunity', opportunityid=opportunity.id)}}">View</a></td>
         <td>{% if opportunity.account %}<a href="{{url_for('account', accountid=opportunity.account.id)}}">{{opportunity.account.name}}</a>{% endif %}</td>
         <td>{% if opportunity.owner %}{{opportunity.owner.fullname}}{% endif %}</td>
         <td>{{opportunity.name}}</td>
@@ -138,13 +138,13 @@
         <td>{{opportunity.mrr}}</td>
         <td>{{opportunity.arr}}</td>
         <td>{{opportunity.stage}}</td>
-        <td>{% if opportunity.created_by %}{{opportunity.created_by.fullname}}{% endif %}</td>
+        <td>{{opportunity.close_date}}</td>
     </tr>
 {% endmacro %}
 
 {% macro render_subscription(subscription) %}
     <tr>
-        <td><a class='button' href="{{url_for('subscription', subscriptionid=subscription.id)}}">View</a></td>
+        <td><a class='button is-info' href="{{url_for('subscription', subscriptionid=subscription.id)}}">View</a></td>
         <td>{% if subscription.account %}{{subscription.account.name}}{% endif %}</td>
         <td>{% if subscription.opportunity %}{{subscription.opportunity.name}}{% endif %}</td>
         <td>{% if subscription.product %}{{subscription.product.name}}{% endif %}</td>

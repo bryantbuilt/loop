@@ -370,7 +370,7 @@ def create_subscription():
         sub_opp_id = models.Subscription.select(models.Subscription.opportunity_id).where(subscriptionid == models.Subscription.id)
         new_opp_mrr = models.Subscription.select(fn.SUM(models.Subscription.mrr)).where(models.Subscription.opportunity_id == sub_opp_id)
         new_opp_arr = models.Subscription.select(fn.SUM(models.Subscription.arr)).where(models.Subscription.opportunity_id == sub_opp_id)
-        models.Opportunity.update(mrr = new_account_mrr, arr = new_account_arr).where(models.Opportunity.id == sub_opp_id).execute()
+        models.Opportunity.update(mrr = new_opp_mrr, arr = new_opp_arr).where(models.Opportunity.id == sub_opp_id).execute()
         return redirect('subscription')
     return render_template('create.html', form=form, products=products, title=title)
 
@@ -404,7 +404,7 @@ def edit_subscription(subscriptionid):
         sub_opp_id = models.Subscription.select(models.Subscription.opportunity_id).where(subscriptionid == models.Subscription.id)
         new_opp_mrr = models.Subscription.select(fn.SUM(models.Subscription.mrr)).where(models.Subscription.opportunity_id == sub_opp_id)
         new_opp_arr = models.Subscription.select(fn.SUM(models.Subscription.arr)).where(models.Subscription.opportunity_id == sub_opp_id)
-        models.Opportunity.update(mrr = new_account_mrr, arr = new_account_arr).where(models.Opportunity.id == sub_opp_id).execute()
+        models.Opportunity.update(mrr = new_opp_mrr, arr = new_opp_arr).where(models.Opportunity.id == sub_opp_id).execute()
         return redirect('subscription')
     return render_template('edit.html', form=form, record=record, title=title)
 

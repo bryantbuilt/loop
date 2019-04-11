@@ -3,8 +3,9 @@
 {% from 'macros.html' import render_opportunity %}
 
 {% block content %}
-    <div class="box">
-        <div class='columns'>
+<div class='tile is-parent'>
+    <div class="tile is-child box">
+        <div class="columns">
             <div class='column'>
                 <p>Account Name: {{account.name}}</p>
                 <p>Account Type: {{account.account_type}}</p>
@@ -24,36 +25,76 @@
         {% if user.id == account.owner.id %}
         <div class='field is-grouped is-grouped-centered'>
             <div class="control">
-                <a role='button' class='button' href="{{url_for('edit_account',accountid=account.id)}}">Edit</a>
+                <a role='button' class='button is-link' href="{{url_for('edit_account',accountid=account.id)}}">Edit</a>
             </div>
             <div class="control">
-                <a role='button' class='button' href="{{url_for('delete_account',accountid=account.id)}}">Delete</a>
+                <a role='button' class='button is-danger' href="{{url_for('delete_account',accountid=account.id)}}">Delete</a>
             </div>
         </div>
         {% endif %}
     </div>
-    <div class='level'>
-        <p class='title level-item'>Related Opportunities</p>
+    <div class="tile is-child box">
+        <canvas id='graph-1'></canvas>
     </div>
-    <table class="table is-fullwidth is-hoverable">
-            <thead>
-                <tr>
-                    <td><a class='button' href="{{url_for('create_opportunity')}}">New</a></td>
-                    <th>Account Name</th>
-                    <th>Owner</th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Primary Contact</th>
-                    <th>MRR</th>
-                    <th>ARR</th>
-                    <th>Stage</th>
-                    <th>Created By</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for opportunity in opportunities %}
-                    {{ render_opportunity(opportunity) }}
-                {% endfor %}
-            </tbody>
-    </table>
+</div>
+<div class='level'>
+    <p class='title level-item'>Related Opportunities</p>
+</div>
+<table class="table is-fullwidth is-hoverable">
+        <thead>
+            <tr>
+                <td><a class='button is-primary' href="{{url_for('create_opportunity')}}">New</a></td>
+                <th>Account Name</th>
+                <th>Owner</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Primary Contact</th>
+                <th>MRR</th>
+                <th>ARR</th>
+                <th>Stage</th>
+                <th>Close Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for opportunity in opportunities %}
+                {{ render_opportunity(opportunity) }}
+            {% endfor %}
+        </tbody>
+</table>
+<script>
+    $(document).ready(function() {
+        var graph1 = $('#graph-1');
+        var graph1Chart = new Chart(graph1,{
+            type: 'line',
+            data: {
+                labels : [{% for account in accounts %}
+                            "{{account.name}}",
+                            {% endfor %}],
+                datasets : [{
+                    label: 'Monthly Revenue',
+                    data : [
+                        {% for account in accounts %}
+                            "{{account.mrr}}",
+                        {% endfor %}
+                        ]
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                },
+                title: {
+                    display: true,
+                    text: 'Top Accounts',
+                    fontSize: 18,
+                    fontColor: 'black'
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}
