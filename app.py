@@ -257,12 +257,13 @@ def delete_contact(contactid):
 @app.route('/opportunity/<opportunityid>/r', methods=['GET'])
 def opportunity(opportunityid=None):
     opportunities = models.Opportunity.select()
+    opp_stage_data = models.Opportunity.select(models.Opportunity.stage,fn.SUM(models.Opportunity.mrr).alias('mrr_in_stage')).group_by(models.Opportunity.stage)
     title = 'Opportunities'
     if opportunityid != None:
         opportunity = models.Opportunity.select().where(models.Opportunity.id == opportunityid).get()
         title = 'Opportunity Details'
         return render_template('opportunity-detail.html', opportunity=opportunity, user=g.user._get_current_object(), title=title)
-    return render_template('opportunity.html', opportunities=opportunities, title=title)
+    return render_template('opportunity.html', opportunities=opportunities, title=title, opp_stage_data=opp_stage_data)
 
 @app.route('/opportunity/create', methods=['GET','POST'])
 @login_required

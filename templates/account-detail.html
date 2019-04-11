@@ -7,19 +7,19 @@
     <div class="tile is-child box">
         <div class="columns">
             <div class='column'>
-                <p>Account Name: {{account.name}}</p>
-                <p>Account Type: {{account.account_type}}</p>
-                <p>Street: {{account.street}}</p>
-                <p>City: {{account.city}}</p>
-                <p>State: {{account.state}}</p>
-                <p>Country: {{account.country}}</p>
+                <p><strong>Account Name:</strong> {{account.name}}</p>
+                <p><strong>Account Type:</strong> {{account.account_type}}</p>
+                <p><strong>Street:</strong> {{account.street}}</p>
+                <p><strong>City:</strong> {{account.city}}</p>
+                <p><strong>State:</strong> {{account.state}}</p>
+                <p><strong>Country:</strong> {{account.country}}</p>
             </div>
             <div class='column'>
-                <p>Owner: {{account.owner.fullname}}</p>
-                <p>Website: {{account.website}}</p>
-                <p>MRR: {{account.mrr}}</p>
-                <p>ARR: {{account.arr}}</p>
-                <p>Created By: {{account.created_by.fullname}}</p>
+                <p><strong>Owner:</strong> {{account.owner.fullname}}</p>
+                <p><strong>Website:</strong> {{account.website}}</p>
+                <p><strong>MRR:</strong> {{account.mrr}}</p>
+                <p><strong>ARR:</strong> {{account.arr}}</p>
+                <p><strong>Created By:</strong>Created By: {{account.created_by.fullname}}</p>
             </div>
         </div>
         {% if user.id == account.owner.id %}
@@ -98,7 +98,8 @@
                         time: {
                             displayFormats: {
                                 'day': 'll'
-                            }
+                            },
+                            min: moment().format('ll')
                         }
 
                     }]

@@ -3,11 +3,10 @@
 {% from 'macros.html' import render_opportunity %}
 
 {% block content %}
-<div class='container'>
-    <div class='level'>
-        <div class="level-item"><p>Graph 1</p></div>
-        <div class="level-item"><p>Graph 2</p></div>
-        <div class="level-item"><p>Graph 3</p></div>
+<div>
+    <div class='tile is-parent'>
+        <div class="tile is-child box"><canvas id='graph-1'></canvas></div>
+        <div class="tile is-child box"><canvas id='graph-2'></canvas></div>
     </div>
     <table class="table is-fullwidth is-hoverable">
         <thead>
@@ -31,4 +30,73 @@
         </tbody>
     </table>
 </div>
+<script>
+$(document).ready(function() {
+    var graph1 = $('#graph-1');
+    var graph1Chart = new Chart(graph1,{
+        type: 'horizontalBar',
+        data: {
+            labels : [{% for opportunity in opportunities %}
+                        "{{opportunity.name}}",
+                        {% endfor %}],
+            datasets : [{
+                backgroundColor: '#63bfcc60',
+                borderColor: '#63bfcc',
+                hoverBorderColor: 'black',
+                borderWidth: 2,
+                label: 'Monthly Revenue',
+                data : [
+                    {% for opportunity in opportunities %}
+                        "{{opportunity.mrr}}",
+                    {% endfor %}
+                    ]
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            title: {
+                display: true,
+                text: 'Top Opportunities',
+                fontSize: 18,
+                fontColor: 'black'
+            }
+        }
+    });
+    var graph2 = $('#graph-2');
+    var graph2Chart = new Chart(graph2,{
+        type: 'polarArea',
+        data: {
+            labels : [{% for row in opp_stage_data %}
+                        "{{row.stage}}",
+                        {% endfor %}],
+            datasets : [{
+                backgroundColor: ['#e5374860','#088e3960','#4ae2d660','#eb42f760','#84e85560'],
+                borderColor: ['#e53748','#088e39','#4ae2d6','#eb42f7','#84e855'],
+                hoverBorderColor: 'black',
+                borderWidth: 1,
+                label: 'MRR in Stage',
+                data : [
+                    {% for row in opp_stage_data %}
+                        "{{row.mrr_in_stage}}",
+                    {% endfor %}
+                    ]
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'MRR By Stage',
+                fontSize: 18,
+                fontColor: 'black'
+            }
+        }
+    });
+});
+</script>
 {% endblock %}
