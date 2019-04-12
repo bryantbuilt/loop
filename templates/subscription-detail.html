@@ -3,18 +3,18 @@
 {% block content %}
     <div class='container columns'>
         <div class='column'>
-            <p>Account: {{subscription.account.name}}</p>
-            <p>Product: {{subscription.product.name}}</p>
-            <p>Price: {{subscription.product_price}}</p>
-            <p>Quantity: {{subscription.quantity}}</p>
-            <p>MRR: {{subscription.mrr}}</p>
+            <p><strong>Account:</strong> {% if subscription.account %} {{subscription.account.name}}{% endif %}</p>
+            <p><strong>Product:</strong> {% if subscription.product %} {{subscription.product.name}}{% endif %}</p>
+            <p><strong>Price:</strong> {{subscription.product_price}}</p>
+            <p><strong>Quantity:</strong> {{subscription.quantity}}</p>
+            <p><strong>MRR:</strong> {{subscription.mrr}}</p>
         </div>
         <div class='column'>
-            <p>Opportunity: {{subscription.opportunity.name}}</p>
-            <p>Start Date: {{subscription.sub_start_date}}</p>
-            <p>End Date: {{subscription.sub_end_date}}</p>
-            <p>ARR: {{subscription.arr}}</p>
-            <p>Created By: {{subscription.created_by.fullname}}</p>
+            <p><strong>Opportunity:</strong> {% if subscription.opportunity %}{{subscription.opportunity.name}}{% endif %}</p>
+            <p><strong>Start Date:</strong> {{subscription.sub_start_date}}</p>
+            <p><strong>End Date:</strong> {{subscription.sub_end_date}}</p>
+            <p><strong>ARR:</strong> {{subscription.arr}}</p>
+            <p><strong>Created By:</strong> {{subscription.created_by.fullname}}</p>
         </div>
     </div>
     {% if user.id == subscription.created_by.id %}

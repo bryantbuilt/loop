@@ -148,9 +148,7 @@ def edit_account(accountid):
             city = form.city.data,
             state = form.state.data,
             country = form.country.data,
-            website = form.website.data,
-            mrr = form.mrr.data,
-            arr = form.arr.data
+            website = form.website.data
         ).where(accountid == models.Account.id)
         edited_account.execute()
         return redirect(url_for('account', accountid=accountid))

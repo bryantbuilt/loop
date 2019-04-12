@@ -5,20 +5,20 @@
     <div class="tile is-child box">
         <div class='columns'>
             <div class='column'>
-                <p>First Name: {{contact.first_name}}</p>
-                <p>Last Name: {{contact.last_name}}</p>
-                <p>Street: {{contact.street}}</p>
-                <p>City: {{contact.city}}</p>
-                <p>State: {{contact.state}}</p>
-                <p>Country: {{contact.country}}</p>
+                <p><strong>First Name:</strong> {{contact.first_name}}</p>
+                <p><strong>Last Name:</strong> {{contact.last_name}}</p>
+                <p><strong>Street:</strong> {{contact.street}}</p>
+                <p><strong>City:</strong> {{contact.city}}</p>
+                <p><strong>State:</strong> {{contact.state}}</p>
+                <p><strong>Country:</strong> {{contact.country}}</p>
             </div>
             <div class='column'>
-                <p>Owner: {{contact.owner.fullname}}</p>
-                <p>Title: {{contact.title}}</p>
-                <p>Department: {{contact.department}}</p>
-                <p>Phone: {{contact.phone}}</p>
-                <p>Email: {{contact.email}}</p>
-                <p>Created By: {{contact.created_by.fullname}}</p>
+                <p><strong>Owner:</strong> {{contact.owner.fullname}}</p>
+                <p><strong>Title:</strong> {{contact.title}}</p>
+                <p><strong>Department:</strong> {{contact.department}}</p>
+                <p><strong>Phone:</strong> {{contact.phone}}</p>
+                <p><strong>Email:</strong> {{contact.email}}</p>
+                <p><strong>Created By:</strong> {{contact.created_by.fullname}}</p>
             </div>
         </div>
         {% if user.id == contact.owner.id %}
