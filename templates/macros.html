@@ -1,10 +1,5 @@
 {% macro render_field(field) %}
     <div class="field is-horizontal">
-        {% if field.errors %}
-            {% for error in field.errors %}
-                <div class="notification error">{{ error }}</div>
-            {% endfor %}
-        {% endif %}
         {% if field.type == 'SelectField' %}
             <div class="field-label">
                 <label for="{{ field.id }}" class='label'>{{field.label.text}}:</label>
@@ -42,17 +37,17 @@
             </div>
         {% endif %}
     </div>
+    {% if field.errors %}
+        {% for error in field.errors %}
+            <div class="notification error is-danger">{{ error }}</div>
+        {% endfor %}
+    {% endif %}
 {% endmacro %}
 
 {% macro render_edit_field(field,record) %}
     <div class="field is-horizontal">
         {% for key, value in record.items() %}
             {% if key == field.id %}
-                {% if field.errors %}
-                    {% for error in field.errors %}
-                        <div class="notification error">{{ error }}</div>
-                    {% endfor %}
-                {% endif %}
                 {% if field.type == 'SelectField' %}
                     <div class="field-label">
                         <label for="{{ field.id }}" class='label'>{{field.label.text}}:</label>
@@ -90,6 +85,11 @@
             {% endif %}
         {% endfor %}
     </div>
+    {% if field.errors %}
+        {% for error in field.errors %}
+            <div class="notification error">{{ error }}</div>
+        {% endfor %}
+    {% endif %}
 {% endmacro %}
 
 {% macro render_account(account) %}

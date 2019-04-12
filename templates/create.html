@@ -72,6 +72,12 @@
         $('#primary_contact').prepend(
             `<option selected>Select Primary Contact</option>`
         );
+
+        {% if opportunityid %}
+        $('#opp-menu').addClass('is-active');
+        {% elif accountid %}
+        $('#account-menu').addClass('is-active');
+        {% endif %}
         
     });
 

@@ -45,7 +45,7 @@ def after_request(response):
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html')
+    return redirect('account')
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
@@ -350,8 +350,9 @@ def subscription(subscriptionid=None):
     return render_template('subscription.html', subscriptions=subscriptions, title=title)
 
 @app.route('/subscription/create', methods=['GET','POST'])
+@app.route('/subscription/create/<accountid>/<opportunityid>', methods=['GET','POST'])
 @login_required
-def create_subscription():
+def create_subscription(accountid=None,opportunityid=None):
     form = forms.SubscriptionForm()
     form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
     form.opportunity.choices = [(str(opportunity.id), opportunity.name) for opportunity in models.Opportunity.select()]
@@ -382,12 +383,14 @@ def create_subscription():
         new_opp_mrr = models.Subscription.select(fn.SUM(models.Subscription.mrr)).where(models.Subscription.opportunity_id == sub_opp_id)
         new_opp_arr = models.Subscription.select(fn.SUM(models.Subscription.arr)).where(models.Subscription.opportunity_id == sub_opp_id)
         models.Opportunity.update(mrr = new_opp_mrr, arr = new_opp_arr).where(models.Opportunity.id == sub_opp_id).execute()
+        if opportunityid != None:
+            return redirect(url_for('opportunity', opportunityid=opportunityid))
         return redirect('subscription')
-    return render_template('create.html', form=form, products=products, title=title)
+    return render_template('create.html', form=form, products=products, title=title, accountid=accountid, opportunityid=opportunityid)
 
 @app.route('/subscription/<subscriptionid>/edit', methods=['GET','POST'])
 @login_required
-def edit_subscription(subscriptionid):
+def edit_subscription(subscriptionid,accountid=None,opportunityid=None):
     form = forms.SubscriptionForm()
     form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
     form.opportunity.choices = [(str(opportunity.id), opportunity.name) for opportunity in models.Opportunity.select()]
@@ -426,7 +429,6 @@ def delete_subscription(subscriptionid):
     user = g.user._get_current_object()
     subscription = models.Subscription.select().where(models.Subscription.id == subscriptionid).get()
     if subscriptionid != None:
-        # subscription has no owner, create logic
         delete_subscription = models.Subscription.select().where(models.Subscription.id == subscriptionid).get()
         delete_subscription.delete_instance(recursive=True, delete_nullable=False)
         return redirect(url_for('subscription'))

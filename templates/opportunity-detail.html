@@ -18,9 +18,9 @@
         <div class="columns">
             <div class='column'>
                 <p><strong>Name:</strong> {{opportunity.name}}</p>
-                <p><strong>Account:</strong> {% if opportunity.account %}{{opportunity.account.name}}{% endif %}</p>
+                <p><strong>Account:</strong> {% if opportunity.account %}<a href="{{url_for('account',accountid=opportunity.account_id)}}">{{opportunity.account.name}}</a>{% endif %}</p>
                 <p><strong>Type:</strong> {{opportunity.opportunity_type}}</p>
-                <p><strong>Primary Contact:</strong> {% if opportunity.primary_contact %}{{opportunity.primary_contact.first_name + ' ' + opportunity.primary_contact.last_name}}{% endif %}</p>
+                <p><strong>Primary Contact:</strong> {% if opportunity.primary_contact %}<a href="{{url_for('contact',contactid=opportunity.primary_contact_id)}}">{{opportunity.primary_contact.first_name + ' ' + opportunity.primary_contact.last_name}}</a>{% endif %}</p>
                 <p><strong>Owner:</strong> {% if opportunity.owner %}{{opportunity.owner.fullname}}{% endif %}</p>
             </div>
             <div class='column'>
@@ -42,7 +42,7 @@
 <table class="table is-fullwidth is-hoverable">
     <thead>
         <tr>
-            <td><a class='button is-primary' href="{{url_for('create_subscription')}}">New</a></td>
+            <td><a class='button is-primary' href="{{url_for('create_subscription', accountid=opportunity.account_id, opportunityid=opportunity.id)}}">New</a></td>
             <th>Account</th>
             <th>Opportunity</th>
             <th>Product</th>
