@@ -9,17 +9,17 @@
             <div class='column'>
                 <p><strong>Account Name:</strong> {{account.name}}</p>
                 <p><strong>Account Type:</strong> {{account.account_type}}</p>
-                <p><strong>Street:</strong> {{account.street}}</p>
-                <p><strong>City:</strong> {{account.city}}</p>
-                <p><strong>State:</strong> {{account.state}}</p>
-                <p><strong>Country:</strong> {{account.country}}</p>
-            </div>
-            <div class='column'>
                 <p><strong>Owner:</strong> {{account.owner.fullname}}</p>
                 <p><strong>Website:</strong> {{account.website}}</p>
                 <p><strong>MRR:</strong> {{account.mrr}}</p>
                 <p><strong>ARR:</strong> {{account.arr}}</p>
-                <p><strong>Created By:</strong>Created By: {{account.created_by.fullname}}</p>
+            </div>
+            <div class='column'>
+                <p><strong>Street:</strong> {{account.street}}</p>
+                <p><strong>City:</strong> {{account.city}}</p>
+                <p><strong>State:</strong> {{account.state}}</p>
+                <p><strong>Country:</strong> {{account.country}}</p>
+                <p><strong>Created By:</strong> {{account.created_by.fullname}}</p>
             </div>
         </div>
         {% if user.id == account.owner.id %}
@@ -43,7 +43,7 @@
 <table class="table is-fullwidth is-hoverable">
         <thead>
             <tr>
-                <td><a class='button is-primary' href="{{url_for('create_opportunity')}}">New</a></td>
+                <td><a class='button is-primary' href="{{url_for('create_opportunity', accountid=account.id)}}">New</a></td>
                 <th>Account Name</th>
                 <th>Owner</th>
                 <th>Name</th>

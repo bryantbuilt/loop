@@ -51,21 +51,21 @@
                 Tables
             </p>
             <ul class="menu-list">
-                <li><a href="{{url_for('account')}}">Accounts</a></li>
-                <li><a href="{{url_for('contact')}}">Contacts</a></li>
-                <li><a href="{{url_for('opportunity')}}">Opportunities</a></li>
-                <li><a href="{{url_for('subscription')}}">Subscriptions</a></li>
+                <li><a id='account-menu' href="{{url_for('account')}}">Accounts</a></li>
+                <li><a id='contact-menu' href="{{url_for('contact')}}">Contacts</a></li>
+                <li><a id='opp-menu' href="{{url_for('opportunity')}}">Opportunities</a></li>
+                <li><a id='sub-menu' href="{{url_for('subscription')}}">Subscriptions</a></li>
             </ul>
             <p class="menu-label">
                 Settings
             </p>
             <ul class="menu-list">
-                <li><a href="{{url_for('product')}}">Products</a></li>
+                <li><a id='product-menu' href="{{url_for('product')}}">Products</a></li>
             </ul>
         </aside>
         <section class='column'>
             <div class='level core-title'>
-                <p class='title level-item'>{{title}}</p>
+                <p id='core-title' class='title level-item'>{{title}}</p>
             </div>
             {% block content %}
             {% endblock %}

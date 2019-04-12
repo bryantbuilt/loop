@@ -266,8 +266,9 @@ def opportunity(opportunityid=None):
     return render_template('opportunity.html', opportunities=opportunities, title=title, opp_stage_data=opp_stage_data)
 
 @app.route('/opportunity/create', methods=['GET','POST'])
+@app.route('/opportunity/create/<accountid>', methods=['GET','POST'])
 @login_required
-def create_opportunity():
+def create_opportunity(accountid=None):
     form = forms.OpportunityForm()
     form.account.choices = [(str(account.id), account.name) for account in models.Account.select()]
     form.owner.choices = [(str(user.id), user.fullname) for user in models.User.select()]
@@ -287,8 +288,10 @@ def create_opportunity():
             stage = form.stage.data,
             close_date = form.close_date.data
         )
+        if accountid != None:
+            return redirect(url_for('account', accountid=accountid))
         return redirect('opportunity')
-    return render_template('create.html', form=form, title=title)
+    return render_template('create.html', form=form, title=title, accountid=accountid)
 
 @app.route('/opportunity/<opportunityid>/edit', methods=['GET','POST'])
 @login_required
@@ -352,7 +355,7 @@ def create_subscription():
     title = 'Create Subscription'
     if form.validate_on_submit():
         flash("Subscription created",'success')
-        models.Subscription.create_subscription(
+        sub_create = models.Subscription.create(
             account = form.account.data,
             opportunity = form.opportunity.data,
             product = form.product.data,
@@ -364,8 +367,12 @@ def create_subscription():
             arr = form.product_price.data * form.quantity.data * 12,
             created_by = g.user._get_current_object()
         )
-        subscriptionid = models.Subscription.select(models.Subscription.id).order_by(models.Subscription.id.desc()).get()
+        sub_create.save()
+        subscriptionid = sub_create.id
+        # subscriptionid = models.Subscription.select(models.Subscription.id).order_by(models.Subscription.id.desc()).get()
+        print(subscriptionid)
         sub_account_id = models.Subscription.select(models.Subscription.account_id).where(subscriptionid == models.Subscription.id)
+        print(sub_account_id)
         new_account_mrr = models.Subscription.select(fn.SUM(models.Subscription.mrr)).where(models.Subscription.account_id == sub_account_id)
         new_account_arr = models.Subscription.select(fn.SUM(models.Subscription.arr)).where(models.Subscription.account_id == sub_account_id)
         models.Account.update(mrr = new_account_mrr,arr = new_account_arr).where(models.Account.id == sub_account_id).execute()
@@ -400,7 +407,9 @@ def edit_subscription(subscriptionid):
             arr = form.product_price.data * form.quantity.data * 12,
         ).where(subscriptionid == models.Subscription.id)
         edit_subscription.execute()
+        print(subscriptionid)
         sub_account_id = models.Subscription.select(models.Subscription.account_id).where(subscriptionid == models.Subscription.id)
+        print(sub_account_id)
         new_account_mrr = models.Subscription.select(fn.SUM(models.Subscription.mrr)).where(models.Subscription.account_id == sub_account_id)
         new_account_arr = models.Subscription.select(fn.SUM(models.Subscription.arr)).where(models.Subscription.account_id == sub_account_id)
         models.Account.update(mrr = new_account_mrr,arr = new_account_arr).where(models.Account.id == sub_account_id).execute()

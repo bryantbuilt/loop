@@ -55,15 +55,14 @@ class LoginForm(Form):
 
 class AccountForm(Form):
     name = StringField('Name')
-    owner = SelectField('Owner')
-    account_type = SelectField('Type', choices=[('Prospect','Prospect'),('Customer','Customer')])
-    website = StringField('Website')
     street = StringField('Street')
+    owner = SelectField('Owner')
     city = StringField('City')
+    account_type = SelectField('Type', choices=[('Prospect','Prospect'),('Customer','Customer')])
     state = StringField('State')
+    website = StringField('Website')
     country = StringField('Country')
-    # mrr = DecimalField('MRR', default=0)
-    # arr = DecimalField('ARR', default=0)
+
 class ContactForm(Form):
     account = SelectField('Account')
     owner = SelectField('Owner')
@@ -83,8 +82,6 @@ class OpportunityForm(Form):
     owner = SelectField('Owner')
     opportunity_type = SelectField('Type', choices=[('New Business','New Business'),('Upgrade','Upgrade'),('Renewal','Renewal')])
     primary_contact = SelectField('Primary Contact')
-    # mrr = DecimalField('MRR',default=0)
-    # arr = DecimalField('ARR',default=0)
     stage = SelectField('Stage', choices=[('Qualifying','Qualifying'),('Demo','Demo'),('Pricing','Pricing'),('Closed Won','Closed Won'),('Lost','Lost')])
     close_date = DateField('Close Date')
 class SubscriptionForm(Form):
@@ -92,8 +89,8 @@ class SubscriptionForm(Form):
     opportunity = SelectField('Opportunity')
     product = SelectField('Product')
     product_price = DecimalField('Price')
-    quantity = IntegerField('Quantity')
     sub_start_date = DateField('Subscription Start Date')
+    quantity = IntegerField('Quantity')
     sub_end_date = DateField('Subscription End Date')
     # mrr = DecimalField('MRR',default=0)
     # arr = DecimalField('ARR',default=0)

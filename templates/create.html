@@ -49,9 +49,13 @@
             });
         {% endif %}
 
-        $('#account').prepend(
-            `<option selected>Select Account</option>`
-        );
+        {% if accountid %} 
+            $('#account').children(`[value='{{accountid}}']`).attr('selected',true)
+        {% else %}
+            $('#account').prepend(
+                `<option selected>Select Account</option>`
+            );
+        {% endif %}
 
         $('#opportunity').prepend(
             `<option selected>Select Opportunity</option>`
@@ -64,7 +68,7 @@
         $('#primary_contact').prepend(
             `<option selected>Select Primary Contact</option>`
         );
-
+        
     });
 
 </script>
