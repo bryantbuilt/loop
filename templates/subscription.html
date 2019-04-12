@@ -21,9 +21,14 @@
         </tr>
     </thead>
     <tbody>
-        {% for subscription in subscriptions %}
+        {% for subscription in subscriptions|sort(attribute='account.name') %}
             {{ render_subscription(subscription) }}
         {% endfor %}
     </tbody>
 </table>
+<script>
+    $(document).ready(function(){
+        $('#sub-menu').addClass('is-active');
+    });
+</script>
 {% endblock %}

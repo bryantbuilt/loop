@@ -56,10 +56,14 @@
                 `<option selected>Select Account</option>`
             );
         {% endif %}
-
-        $('#opportunity').prepend(
-            `<option selected>Select Opportunity</option>`
-        );
+        
+        {% if opportunityid %}
+            $('#opportunity').children(`[value='{{opportunityid}}']`).attr('selected',true)
+        {% else %}
+            $('#opportunity').prepend(
+                `<option selected>Select Opportunity</option>`
+            );
+        {% endif %}
 
         $('#owner').prepend(
             `<option selected>Select Owner</option>`

@@ -54,7 +54,7 @@ class LoginForm(Form):
     password = PasswordField('Password', validators=[DataRequired()])
 
 class AccountForm(Form):
-    name = StringField('Name')
+    name = StringField('Account Name')
     street = StringField('Street')
     owner = SelectField('Owner')
     city = StringField('City')

@@ -32,9 +32,14 @@
                         </div>
                     </div>
                 </th>
-                <th><button class='level-item button' type="submit" id="submit">Add Product</button></th>
+                <th><button class='level-item button is-primary' type="submit" id="submit">Add</button></th>
             </tr>
         </form>
     </tbody>
 </table>
+<script>
+    $(document).ready(function(){
+        $('#product-menu').addClass('is-active');
+    });
+</script>
 {% endblock %}

@@ -112,9 +112,8 @@
 {% macro render_contact(contact) %}
     <tr>
         <td><a class='button is-info' href="{{url_for('contact', contactid=contact.id)}}">View</a></td>
-        <td>{% if contact.account %}<a href="{{url_for('account', accountid=contact.account.id)}}">{{contact.account.name}}</a>{% endif %}</td>
-        <td>{% if contact.owner %}{{contact.owner.fullname}}{% endif %}</td>
         <td>{{contact.first_name + ' ' + contact.last_name}}</td>
+        <td>{% if contact.account %}<a href="{{url_for('account', accountid=contact.account.id)}}">{{contact.account.name}}</a>{% endif %}</td>
         <td>{{contact.phone}}</td>
         <td>{{contact.email}}</td>
         <td>{{contact.title}}</td>
@@ -123,22 +122,22 @@
         <td>{{contact.city}}</td>
         <td>{{contact.state}}</td>
         <td>{{contact.country}}</td>
-        <td>{% if contact.created_by %}{{contact.created_by.fullname}}{% endif %}</td>
+        <td>{% if contact.owner %}{{contact.owner.fullname}}{% endif %}</td>
     </tr>
 {% endmacro %}
 
 {% macro render_opportunity(opportunity) %}
     <tr>
         <td><a class='button is-info' href="{{url_for('opportunity', opportunityid=opportunity.id)}}">View</a></td>
-        <td>{% if opportunity.account %}<a href="{{url_for('account', accountid=opportunity.account.id)}}">{{opportunity.account.name}}</a>{% endif %}</td>
-        <td>{% if opportunity.owner %}{{opportunity.owner.fullname}}{% endif %}</td>
         <td>{{opportunity.name}}</td>
         <td>{{opportunity.opportunity_type}}</td>
+        <td>{% if opportunity.account %}<a href="{{url_for('account', accountid=opportunity.account.id)}}">{{opportunity.account.name}}</a>{% endif %}</td>
         <td>{% if opportunity.primary_contact %}<a href="{{url_for('contact',contactid=opportunity.primary_contact.id)}}">{{opportunity.primary_contact.first_name + ' ' + opportunity.primary_contact.last_name}}</a>{% endif %}</td>
         <td>{{opportunity.mrr}}</td>
         <td>{{opportunity.arr}}</td>
         <td>{{opportunity.stage}}</td>
         <td>{{opportunity.close_date}}</td>
+        <td>{% if opportunity.owner %}{{opportunity.owner.fullname}}{% endif %}</td>
     </tr>
 {% endmacro %}
 
@@ -164,8 +163,8 @@
         <td>{{product.price}}</td>
         <td>
             <div class="buttons">
-                <a role='button' class='button' href="{{url_for('edit_product', productid=product.id)}}">Edit</a>
-                <a role='button' class='button' href="{{url_for('delete_product',productid=product.id)}}">Delete</a>
+                <a role='button' class='button is-link' href="{{url_for('edit_product', productid=product.id)}}"><i class="far fa-edit"></i></a>
+                <a role='button' class='button is-danger' href="{{url_for('delete_product',productid=product.id)}}"><i class="far fa-trash-alt"></i></a>
             </div>
         </td>
     </tr>

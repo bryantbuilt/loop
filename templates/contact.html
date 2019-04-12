@@ -8,9 +8,8 @@
         <thead>
             <tr>
                 <td><a class='button is-primary' href="{{url_for('create_contact')}}">New</a></td>
-                <th>Account Name</a></th>
-                <th>Owner</th>
                 <th>Name</th>
+                <th>Account</th>
                 <th>Phone</th>
                 <th>Email</th>
                 <th>Title</th>
@@ -19,7 +18,7 @@
                 <th>City</th>
                 <th>State</th>
                 <th>Country</th>
-                <th>Created By</th>
+                <th>Owner</th>
             </tr>
         </thead>
         <tbody>
@@ -29,4 +28,9 @@
         </tbody>
     </table>
 </div>
+<script>
+    $(document).ready(function(){
+        $('#contact-menu').addClass('is-active');
+    });
+</script>
 {% endblock %}

@@ -5,6 +5,16 @@
 {% block content %}
 <div class='tile is-parent'>
     <div class="tile is-child box">
+        {% if user.id == account.owner.id %}
+        <div class='field is-grouped is-grouped-right'>
+            <div class="control">
+                <a role='button' class='button is-link' href="{{url_for('edit_account',accountid=account.id)}}"><i class="far fa-edit"></i></a>
+            </div>
+            <div class="control">
+                <a role='button' class='button is-danger' href="{{url_for('delete_account',accountid=account.id)}}"><i class="far fa-trash-alt"></i></a>
+            </div>
+        </div>
+        {% endif %}
         <div class="columns">
             <div class='column'>
                 <p><strong>Account Name:</strong> {{account.name}}</p>
@@ -22,16 +32,6 @@
                 <p><strong>Created By:</strong> {{account.created_by.fullname}}</p>
             </div>
         </div>
-        {% if user.id == account.owner.id %}
-        <div class='field is-grouped is-grouped-centered'>
-            <div class="control">
-                <a role='button' class='button is-link' href="{{url_for('edit_account',accountid=account.id)}}">Edit</a>
-            </div>
-            <div class="control">
-                <a role='button' class='button is-danger' href="{{url_for('delete_account',accountid=account.id)}}">Delete</a>
-            </div>
-        </div>
-        {% endif %}
     </div>
     <div class="tile is-child box">
         <canvas id='graph-1'></canvas>
@@ -44,15 +44,15 @@
         <thead>
             <tr>
                 <td><a class='button is-primary' href="{{url_for('create_opportunity', accountid=account.id)}}">New</a></td>
-                <th>Account Name</th>
-                <th>Owner</th>
                 <th>Name</th>
                 <th>Type</th>
+                <th>Account</th>
                 <th>Primary Contact</th>
                 <th>MRR</th>
                 <th>ARR</th>
                 <th>Stage</th>
                 <th>Close Date</th>
+                <th>Owner</th>
             </tr>
         </thead>
         <tbody>
@@ -64,7 +64,6 @@
 <script>
     $(document).ready(function() {
         let graph1 = $('#graph-1');
-        let stageName = ['Closed Won', 'Pricing', 'Demo', 'Qualifying', 'Lost'];
         let graph1Chart = new Chart(graph1,{
             type: 'line',
             data: {
@@ -112,6 +111,7 @@
                 }
             }
         });
+        $('#account-menu').addClass('is-active');
     });
 </script>
 {% endblock %}

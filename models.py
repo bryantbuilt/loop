@@ -139,7 +139,7 @@ class Subscription(Model):
     account = ForeignKeyField(model=Account, null=True, backref='subscription')
     opportunity = ForeignKeyField(model=Opportunity, null=True, backref='subscription')
     product = ForeignKeyField(model=Product, null=True, backref='subscription')
-    product_price = DecimalField(default=Product.price)
+    product_price = DecimalField()
     quantity = IntegerField()
     sub_start_date = DateField()
     sub_end_date = DateField()
