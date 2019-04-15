@@ -24,7 +24,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for opportunity in opportunities %}
+            {% for opportunity in opportunities|sort(attribute='close_date') %}
                 {{ render_opportunity(opportunity) }}
             {% endfor %}
         </tbody>

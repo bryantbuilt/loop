@@ -2,6 +2,10 @@
     margin-top: 10px;
 }
 
+.signup {
+    width: 400px;
+}
+
 canvas {
     height: 100%;
 }
